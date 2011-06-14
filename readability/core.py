@@ -11,6 +11,7 @@ This module provides the core functionality of python-readability.
 import oauth2
 import urlparse
 import urllib
+from cgi import parse_qsl
 
 from .api import Readability, settings
 
@@ -32,20 +33,19 @@ def oauth(consumer_key, consumer_secret, callback=None, token=None):
 
         consumer = oauth2.Consumer(consumer_key, consumer_secret)
 
-        _url = settings.base_url.format(settings.request_token_url)
+        _url = settings.base_url % (settings.request_token_url,)
         r, content = oauth2.Client(consumer).request(_url, 'GET')
 
         if r['status'] != '200':
-            # print content
-            raise Exception('Invalid response {0}.'.format(r['status']))
+            raise Exception('Invalid response %s.' % (r['status']),)
 
-        token_response = dict(urlparse.parse_qsl(content))
+        token_response = dict(parse_qsl(content))
 
         oauth_token = token_response['oauth_token']
         oauth_token_secret = token_response['oauth_token_secret']
 
-        _url = settings.base_url.format(settings.auth_url)
-        auth_url = '{0}?oauth_token={1}'.format(_url, oauth_token)
+        _url = settings.base_url % (settings.auth_url,)
+        auth_url = '%s?oauth_token=%s' % (_url, oauth_token)
         oauth_pin = callback(auth_url)
 
         token = oauth2.Token(oauth_token, oauth_token_secret)
@@ -53,11 +53,11 @@ def oauth(consumer_key, consumer_secret, callback=None, token=None):
 
         client = oauth2.Client(consumer, token)
 
-        url = settings.base_url.format(settings.access_token_url)
+        url = settings.base_url % (settings.access_token_url,)
         r, content = client.request(url, 'POST')
 
         # print content
-        ext_token = dict(urlparse.parse_qsl(content))
+        ext_token = dict(parse_qsl(content))
         ext_token = (ext_token['oauth_token'], ext_token['oauth_token_secret'])
 
         return oauth(consumer_key, consumer_secret, token=ext_token)
@@ -79,12 +79,12 @@ def xauth(consumer_key, consumer_secret, username, password):
     params['x_auth_mode'] = 'client_auth'
 
     client.set_signature_method = oauth2.SignatureMethod_HMAC_SHA1()
-    url = settings.base_url.format(settings.access_token_url)
+    url = settings.base_url % (settings.access_token_url,)
 
     r, content = client.request(
         url, method='POST', body=urllib.urlencode(params))
 
-    token = dict(urlparse.parse_qsl(content))
+    token = dict(parse_qsl(content))
     token = (token['oauth_token'], token['oauth_token_secret'])
 
 

@@ -34,7 +34,7 @@ def admin_only(f, *args, **kwargs):
 
     if not settings.admin:
         func = get_scope(f, args)
-        raise PermissionsError('{0} is for Readability Admins only.'.format(func))
+        raise PermissionsError('%s is for Readability Admins only.' % (func,))
 
     return f(*args, **kwargs)
 
@@ -114,9 +114,9 @@ class ReadabilityCore(object):
             resource = '/'.join(resource)
 
         if params:
-            resource += '?{0}'.format(urllib.urlencode(params))
+            resource += '?%s' % (urllib.urlencode(params))
 
-        return settings.base_url.format(resource)
+        return settings.base_url % (resource,)
 
 
     def _get_http_resource(self, resource, params=None):
@@ -125,7 +125,7 @@ class ReadabilityCore(object):
         url = self._generate_url(resource, params)
 
         if settings.verbose:
-            settings.verbose.write('{0}\n'.format(url))
+            settings.verbose.write('%s\n' % (url,))
 
         r, content = self.client.request(url, method='GET')
         raise_for_status(r['status'])

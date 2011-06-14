@@ -46,7 +46,7 @@ class Bookmark(BaseResource):
 
 
     def __repr__(self):
-        return '<bookmark id="{0}">'.format(self.id)
+        return '<bookmark id="%s">' % (self.id,)
 
 
     @staticmethod
@@ -107,7 +107,7 @@ class Article(BaseResource):
 
 
     def __repr__(self):
-        return '<article id="{0}">'.format(self.id)
+        return '<article id="%s">' % (self.id,)
 
 
     @staticmethod
@@ -136,7 +136,7 @@ class Domain(BaseResource):
 
 
     def __repr__(self):
-        return '<domain fqdn="{0}">'.format(self.fqdn)
+        return '<domain fqdn="%s">' % (self.fqdn,)
 
 
     @staticmethod
@@ -175,7 +175,7 @@ class Contribution(BaseResource):
 
 
     def __repr__(self):
-        return '<contribution domain="{0}">'.format(self.domain)
+        return '<contribution domain="%s">' % (self.domain,)
 
 
     @staticmethod
@@ -201,7 +201,7 @@ class User(BaseResource):
 
 
     def __repr__(self):
-        return '<user name="{0}">'.format(self.username)
+        return '<user name="%s">' % (self.username,)
 
 
     @staticmethod
