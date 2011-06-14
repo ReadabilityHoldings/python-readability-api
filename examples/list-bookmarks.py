@@ -28,7 +28,6 @@ from ext import readability
 from ext import get_consumer_keys, get_oauth_token
 
 
-
 USAGE = """
 Usage:
 
@@ -45,7 +44,12 @@ To use the other example modules, run the following:
 
 def main():
 
-    c_key, c_secret = get_consumer_keys()
+    try:
+        c_key, c_secret = get_consumer_keys()
+    except ValueError:
+        print >> sys.stderr, 'READABILITY_OAUTH_TOKEN and READABILITY_OAUTH_SECRET must be set.'
+        sys.exit(1)
+
     token = get_oauth_token()
 
     rdd = readability.oauth(c_key, c_secret, token=token)
@@ -54,7 +58,7 @@ def main():
     bookmarks = rdd.get_me().bookmarks()
 
     for mark in bookmarks:
-        print '%s (%s)' % (mark.article.title, mark.article.domain)
+        print '- %s (%s)' % (mark.article.title, mark.article.domain)
 
 
 if __name__ == '__main__':
