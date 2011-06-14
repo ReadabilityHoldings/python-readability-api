@@ -25,6 +25,12 @@ USAGE = """
 Usage:
 
    $ ./login.py <username> <password>
+
+
+The following environment variables must be set:
+
+- READABILITY_CONSUMER_KEY
+- READABILITY_CONSUMER_SECRET
 """
 
 TEMPLATE = """
@@ -49,9 +55,13 @@ def get_credentials():
 
 def main():
 
-
     user, passwd = get_credentials()
-    c_key, c_secret = get_consumer_keys()
+    try:
+        c_key, c_secret = get_consumer_keys()
+    except ValueError:
+        print >> sys.stderr, 'READABILITY_OAUTH_TOKEN and READABILITY_OAUTH_SECRET must be set.'
+
+
 
     try:
         o_token, o_secret = readability.xauth(c_key, c_secret, user, passwd)
