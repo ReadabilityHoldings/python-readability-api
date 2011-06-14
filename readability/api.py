@@ -8,7 +8,6 @@ This module provies the core Readability API interface.
 """
 
 
-import json
 import urllib
 import urlparse
 
@@ -19,6 +18,11 @@ from .config import settings
 from .models import Bookmark, Article, Domain, Contribution, User
 from .helpers import is_collection, to_python, to_api, get_scope
 
+
+try:
+    import json
+except ImportError:
+    import simplejson as json
 
 
 @decorator
@@ -117,6 +121,7 @@ class ReadabilityCore(object):
 
     def _get_http_resource(self, resource, params=None):
         """GETs HTTP Resource at given path."""
+
         url = self._generate_url(resource, params)
 
         if settings.verbose:
@@ -134,8 +139,6 @@ class ReadabilityCore(object):
         url = self. _generate_url(resource, None)
 
         params = urllib.urlencode(params)
-        # print url
-        # print params
         r, content =  self.client.request(url, method='POST', body=params)
 
         return r
