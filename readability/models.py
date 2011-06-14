@@ -219,7 +219,6 @@ class User(BaseResource):
         """Returns Bookmark list, filtered by User."""
 
         if self.username == self._rdd.username:
-            print 'safe'
             self._rdd.get_bookmarks(user=self.username, **filters)
         else:
             return self._rdd.get_bookmarks_by_user(self.username, **filters)
