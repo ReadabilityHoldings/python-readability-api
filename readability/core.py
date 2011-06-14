@@ -13,7 +13,7 @@ import urlparse
 import urllib
 from cgi import parse_qsl
 
-from .api import Readability, settings
+from .api import Readability, settings, AuthenticationError
 
 
 
@@ -85,7 +85,10 @@ def xauth(consumer_key, consumer_secret, username, password):
         url, method='POST', body=urllib.urlencode(params))
 
     token = dict(parse_qsl(content))
-    token = (token['oauth_token'], token['oauth_token_secret'])
+    try:
+        token = (token['oauth_token'], token['oauth_token_secret'])
+    except KeyError:
+        raise AuthenticationError('Invalid Credentials.')
 
 
     return token
