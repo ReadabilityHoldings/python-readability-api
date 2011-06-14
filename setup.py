@@ -4,7 +4,7 @@
 import os
 import sys
 
-from distutils.core import setup
+from setuptools import setup
 
 
 
@@ -13,7 +13,7 @@ if sys.argv[-1] == 'publish':
     sys.exit()
 
 with open('reqs.txt', 'r') as f:
-    required = r.readlines()
+    required = f.readlines()
 
 if sys.version_info[:2] < (2,6):
     required.append('simplejson')
