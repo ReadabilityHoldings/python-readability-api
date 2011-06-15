@@ -11,8 +11,8 @@ This module expects the following environment variables to be set:
 
 - READABILITY_CONSUMER_KEY
 - READABILITY_CONSUMER_SECRET
-- READABILITY_OAUTH_TOKEN
-- READABILITY_OAUTH_SECRET
+- READABILITY_ACCESS_TOKEN
+- READABILITY_ACCESS_SECRET
 
 Once you have your consumer keys setup, run the following to get your OAuth
 tokens::
@@ -25,7 +25,7 @@ tokens::
 import sys
 
 from ext import readability
-from ext import get_consumer_keys, get_oauth_token
+from ext import get_consumer_keys, get_access_token
 
 
 
@@ -34,10 +34,10 @@ def main():
     try:
         c_key, c_secret = get_consumer_keys()
     except ValueError:
-        print >> sys.stderr, 'READABILITY_OAUTH_TOKEN and READABILITY_OAUTH_SECRET must be set.'
+        print >> sys.stderr, 'READABILITY_ACCESS_TOKEN and READABILITY_ACCESS_SECRET must be set.'
         sys.exit(1)
 
-    token = get_oauth_token()
+    token = get_access_token()
 
     rdd = readability.oauth(c_key, c_secret, token=token)
 
