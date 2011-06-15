@@ -20,7 +20,8 @@ from .api import Readability, settings, AuthenticationError
 def oauth(consumer_key, consumer_secret, callback=None, token=None):
     """Returns an authenticated Readability object, via OAuth.
 
-    TODO: Setup callback urles.
+    TODO: Setup callback URLs.
+    TODO: Cleanup.
     """
 
     if token:
@@ -56,9 +57,11 @@ def oauth(consumer_key, consumer_secret, callback=None, token=None):
         url = settings.base_url % (settings.access_token_url,)
         r, content = client.request(url, 'POST')
 
-        # print content
         ext_token = dict(parse_qsl(content))
-        ext_token = (ext_token['oauth_token'], ext_token['oauth_token_secret'])
+        try:
+            ext_token = (ext_token['oauth_token'], ext_token['oauth_token_secret'])
+        except KeyError:
+            raise AuthenticationError('Invalid Credentials.')
 
         return oauth(consumer_key, consumer_secret, token=ext_token)
 
