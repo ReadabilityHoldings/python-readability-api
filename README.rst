@@ -63,11 +63,11 @@ Install
 
 Installing python-readability is easy::
 
-    $ pip install readability
+    $ pip install readability-api
 
 Of, if you must::
 
-    $ easy_install readability
+    $ easy_install readability-api
 
 But, you `really shouldn't do that
 <http://www.pip-installer.org/en/latest/index.html#pip-compared-to-easy-install>`_.
