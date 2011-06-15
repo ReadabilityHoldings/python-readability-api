@@ -8,8 +8,6 @@ sys.path.insert(0, os.path.abspath('..'))
 
 import readability
 
-readability.settings.base_url = 'http://127.0.0.1:8000/api/rest/v1/%s'
-
 
 def get_consumer_keys():
     """Gets Readability consumer keys from environment variables."""
