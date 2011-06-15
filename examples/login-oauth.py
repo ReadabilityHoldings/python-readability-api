@@ -38,11 +38,11 @@ The following environment variables must be set:
 TEMPLATE = """
 To use the other example modules, run the following:
 
-  $ export READABILITY_OAUTH_TOKEN=%s
-  $ export READABILITY_OAUTH_SECRET=%s
+  $ export READABILITY_ACCESS_TOKEN=%s
+  $ export READABILITY_ACCESS_SECRET=%s
 """
 
-RAW_TEMPLATE = 'export READABILITY_OAUTH_TOKEN=%s ; export READABILITY_OAUTH_SECRET=%s'
+RAW_TEMPLATE = 'export READABILITY_ACCESS_TOKEN=%s ; export READABILITY_ACCESS_SECRET=%s'
 
 
 

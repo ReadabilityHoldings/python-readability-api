@@ -21,13 +21,13 @@ def get_consumer_keys():
         raise ValueError('$READABILITY_CONSUMER_SECRET must be set.')
 
 
-def get_oauth_token():
+def get_access_token():
     """Gets Readability consumer keys from environment variables."""
 
-    o_token = os.environ.get('READABILITY_OAUTH_TOKEN')
-    o_secret = os.environ.get('READABILITY_OAUTH_SECRET')
+    o_token = os.environ.get('READABILITY_ACCESS_TOKEN')
+    o_secret = os.environ.get('READABILITY_ACCESS_SECRET')
 
     if all((o_token, o_secret)):
         return (o_token, o_secret)
     else:
-        raise ValueError('$READABILITY_OAUTH_SECRET must be set.')
+        raise ValueError('$READABILITY_ACCESS_SECRET must be set.')
