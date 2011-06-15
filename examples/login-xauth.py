@@ -19,8 +19,6 @@ import sys
 
 from ext import readability, get_consumer_keys
 
-
-
 USAGE = """
 Usage:
 
