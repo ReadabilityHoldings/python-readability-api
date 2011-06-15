@@ -143,7 +143,7 @@ class ReadabilityCore(object):
         r, content =  self.client.request(url, method='POST', body=params)
         raise_for_status(r)
 
-        return r, content
+        return r
 
 
     def _delete_http_resource(self, resource, params=None):
@@ -208,7 +208,7 @@ class ReadabilityCore(object):
     def _post_resource(self, http_resource, **kwargs):
         """POSTs API Resource of given path."""
 
-        r, content = self._post_http_resource(http_resource, params=kwargs)
+        r = self._post_http_resource(http_resource, params=kwargs)
 
         return r
 
