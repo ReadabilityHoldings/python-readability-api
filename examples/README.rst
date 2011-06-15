@@ -3,8 +3,8 @@ Readability Examples
 
 You need to set the following environment variables set:
 
-``READABILITY_CONSUMER_KEY``
-``READABILITY_CONSUMER_SECRET``
+- ``READABILITY_CONSUMER_KEY``
+- ``READABILITY_CONSUMER_SECRET``
 
 Example::
 
