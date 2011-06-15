@@ -99,3 +99,8 @@ The MIT License::
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
 
+
+API Access
+----------
+
+Don't have a Readability API key? `Send us an email <https://www.readability.com/contact>`_.
