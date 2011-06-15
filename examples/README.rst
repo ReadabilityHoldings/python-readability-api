@@ -19,11 +19,11 @@ If you don't have a set of keys,
 Example Scripts
 ---------------
 
-`login-xauth.py``
+``login-xauth.py``
     This module requests your username and password, and fetches your
     OAuth tokens (via xAuth) for use by the other modules.
 
-`login-oauth.py``
+``login-oauth.py``
     This module opens an authorization window in your webbrowser, and
     fetches your OAuth tokens for use by the other modules.
 
