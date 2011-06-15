@@ -16,6 +16,11 @@ from cgi import parse_qsl
 from .api import Readability, settings, AuthenticationError
 
 
+__version__ = '0.1.1'
+__license__ = 'MIT'
+__author__ = 'The Readability Team'
+
+
 
 def oauth(consumer_key, consumer_secret, callback=None, token=None):
     """Returns an authenticated Readability object, via OAuth.
