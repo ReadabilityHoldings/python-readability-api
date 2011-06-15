@@ -17,7 +17,7 @@ This module expects the following environment variables to be set:
 Once you have your consumer keys setup, run the following to get your OAuth
 tokens::
 
-    $ ./login.py <username> <password>
+    $ ./login-xauth.py <username> <password>
 
 """
 
@@ -27,19 +27,6 @@ import sys
 from ext import readability
 from ext import get_consumer_keys, get_oauth_token
 
-
-USAGE = """
-Usage:
-
-   $ ./login.py <username> <password>
-"""
-
-TEMPLATE = """
-To use the other example modules, run the following:
-
-  $ export READABILITY_OAUTH_TOKEN=%s
-  $ export READABILITY_OAUTH_SECRET=%s
-"""
 
 
 def main():
