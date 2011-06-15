@@ -40,6 +40,8 @@ To use the other example modules, run the following:
   $ export READABILITY_OAUTH_SECRET=%s
 """
 
+RAW_TEMPLATE = 'export READABILITY_OAUTH_TOKEN=%s; export READABILITY_OAUTH_SECRET=%s'
+
 
 
 def get_credentials():
@@ -54,7 +56,6 @@ def get_credentials():
 
 
 def main():
-
     user, passwd = get_credentials()
     try:
         c_key, c_secret = get_consumer_keys()
@@ -70,9 +71,12 @@ def main():
         sys.exit(77)
 
     if c_key and c_secret:
-        print 'Login successful!'
+        print >> sys.stderr, 'Login successful!'
 
-    print TEMPLATE % (o_token, o_secret)
+    if '--raw' in sys.argv:
+        print RAW_TEMPLATE % (o_token, o_secret)
+    else:
+        print TEMPLATE % (o_token, o_secret)
 
 
 if __name__ == '__main__':

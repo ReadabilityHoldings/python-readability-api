@@ -16,6 +16,8 @@ This module expects the following environment variables to be set:
 
 
 import sys
+import webbrowser
+
 
 from ext import readability, get_consumer_keys
 
@@ -40,7 +42,8 @@ To use the other example modules, run the following:
   $ export READABILITY_OAUTH_SECRET=%s
 """
 
-import webbrowser
+RAW_TEMPLATE = 'export READABILITY_OAUTH_TOKEN=%s ; export READABILITY_OAUTH_SECRET=%s'
+
 
 
 def get_oauth_pin(url):
@@ -69,7 +72,10 @@ def main():
     if c_key and c_secret:
         print 'Login successful!'
 
-    print TEMPLATE % (rdd.token_tuple)
+    if '--raw' in sys.argv:
+        print RAW_TEMPLATE % (rdd.token_tuple)
+    else:
+        print TEMPLATE % (rdd.token_tuple)
 
 
 if __name__ == '__main__':
