@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
-login-xauth.py
+login-oauth.py
 ~~~~~~~~~~~~~~
 
-This module is an example of how to harness the Readability API w/ xAuth.
+This module is an example of how to harness the Readability API w/ OAuth.
 
 This module expects the following environment variables to be set:
 
@@ -24,7 +24,7 @@ from ext import readability, get_consumer_keys
 USAGE = """
 Usage:
 
-   $ ./login-xauth.py <username> <password>
+   $ ./login-oauth.py <username> <password>
 
 
 The following environment variables must be set:
@@ -40,31 +40,28 @@ To use the other example modules, run the following:
   $ export READABILITY_OAUTH_SECRET=%s
 """
 
+import webbrowser
 
 
-def get_credentials():
+def get_oauth_pin(url):
     """Grabs credentials from arguments."""
 
-    if len(sys.argv) < 3:
-        print 'Credentials needed.'
-        print >> sys.stderr, USAGE
-        sys.exit(1)
-
-    return sys.argv[1:3]
+    webbrowser.open(url)
+    return raw_input('Authorization PIN? ')
 
 
 def main():
 
-    user, passwd = get_credentials()
     try:
         c_key, c_secret = get_consumer_keys()
     except ValueError:
         print >> sys.stderr, 'READABILITY_CONSUMER_KEY and READABILITY_CONSUMER_SECRET must be set.'
+        sys.exit(1)
 
 
 
     try:
-        o_token, o_secret = readability.xauth(c_key, c_secret, user, passwd)
+        rdd = readability.oauth(c_key, c_secret, callback=get_oauth_pin)
     except readability.api.AuthenticationError:
         print >> sys.stderr, '\nLogin failed. Invalid credentials.'
         sys.exit(77)
@@ -72,7 +69,7 @@ def main():
     if c_key and c_secret:
         print 'Login successful!'
 
-    print TEMPLATE % (o_token, o_secret)
+    print TEMPLATE % (rdd.token_tuple)
 
 
 if __name__ == '__main__':
