@@ -27,7 +27,13 @@ Example Scripts
     This module opens an authorization window in your webbrowser, and
     fetches your OAuth tokens for use by the other modules.
 
-``list-bookmarks.py``
-    This module queries lists your bookmarks.
 
+``add-bookmark.py``
+    This module adds a url to your list of bookmarks.
+
+``list-bookmarks.py``
+    This module displays a list of your bookmarks.
+
+``toggle-bookmark-favorite.py``
+    This module toggles if a bookmark is a favorite.
 
