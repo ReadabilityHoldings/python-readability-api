@@ -7,9 +7,7 @@ readability.models
 This module provides the core Readability API models.
 """
 
-from .helpers import is_collection, to_python
-from .config import settings
-
+from .helpers import to_python, to_api
 
 
 class BaseResource(object):
@@ -46,7 +44,7 @@ class Bookmark(BaseResource):
 
 
     def __repr__(self):
-        return '<bookmark id="%s">' % (self.id,)
+        return '<bookmark id="%s" favorite="%s" archive="%s" read_percent="%s">' % (self.id, self.favorite, self.archive, self.read_percent)
 
 
     @staticmethod
@@ -155,7 +153,7 @@ class Domain(BaseResource):
         return self._rdd.get_articles(domain=self.fqdn, **filters)
 
 
-    def contributions(self):
+    def contributions(self, **filters):
         """Returns Article list, filtered by Domain."""
 
         return self._rdd.get_contributions(domain=self.fqdn, **filters)
