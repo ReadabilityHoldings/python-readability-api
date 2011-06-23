@@ -14,8 +14,8 @@ This module expects the following environment variables to be set:
 - READABILITY_ACCESS_TOKEN
 - READABILITY_ACCESS_SECRET
 
-Once you have your consumer keys setup, run the following to get your OAuth
-tokens::
+Once you have your consumer keys setup, run the following to get your
+access tokens::
 
     $ ./login-xauth.py <username> <password>
 
