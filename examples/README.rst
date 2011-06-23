@@ -27,6 +27,7 @@ Example Scripts
     This module opens an authorization window in your webbrowser, and
     fetches your OAuth tokens for use by the other modules.
 
+---------------
 
 ``add-bookmark.py``
     This module adds a url to your list of bookmarks.
