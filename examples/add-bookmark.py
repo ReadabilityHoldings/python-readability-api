@@ -26,8 +26,6 @@ import sys
 from ext import readability
 from ext import get_consumer_keys, get_access_token
 
-readability.settings.base_url = 'http://127.0.0.1:8000/api/rest/v1/%s'
-
 
 def main():
 
@@ -43,9 +41,9 @@ def main():
 
     url = raw_input('Enter a URL to bookmark: ')
     print url
-    
+
     bookmark = rdd.add_bookmark(url=url)
-    
+
     print bookmark
 
 
