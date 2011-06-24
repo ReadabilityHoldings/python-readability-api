@@ -21,23 +21,12 @@ access tokens:
 
 """
 
-import sys
-
-from ext import readability
-from ext import get_consumer_keys, get_access_token
+from ext import setup_rdd
 
 
 def main():
 
-    try:
-        c_key, c_secret = get_consumer_keys()
-    except ValueError:
-        print >> sys.stderr, 'READABILITY_ACCESS_TOKEN and READABILITY_ACCESS_SECRET must be set.'
-        sys.exit(1)
-
-    token = get_access_token()
-
-    rdd = readability.oauth(c_key, c_secret, token=token)
+    rdd = setup_rdd()
 
     bookmark_id = raw_input('Enter an ID of a bookmark to toggle favorite status for: ')
     bookmark = rdd.get_bookmark(bookmark_id)

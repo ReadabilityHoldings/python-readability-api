@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 """
-list-bookmarks.py
-~~~~~~~~~~~~~~~~~
+read-bookmark.py
+~~~~~~~~~~~~~~~~
 
 This module is an example of how to harness the Readability API w/ oAuth.
 
