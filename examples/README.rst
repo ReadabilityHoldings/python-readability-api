@@ -38,3 +38,5 @@ Example Scripts
 ``toggle-bookmark-favorite.py``
     This module toggles if a bookmark is a favorite.
 
+``read-bookmark.py``
+    This module gives you a (terrible) CLI Readability reader.
