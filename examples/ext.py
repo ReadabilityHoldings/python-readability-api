@@ -31,3 +31,16 @@ def get_access_token():
         return (o_token, o_secret)
     else:
         raise ValueError('$READABILITY_ACCESS_SECRET must be set.')
+
+
+def setup_rdd():
+    """Boostraps Readability instance from environment."""
+
+    try:
+        c_key, c_secret = get_consumer_keys()
+    except ValueError:
+        print >> sys.stderr, 'READABILITY_ACCESS_TOKEN and READABILITY_ACCESS_SECRET must be set.'
+        sys.exit(1)
+
+    token = get_access_token()
+    return readability.oauth(c_key, c_secret, token=token)
