@@ -179,6 +179,7 @@ class ReadabilityCore(object):
         items = []
 
         response = self._get_http_resource(key, params=kwargs)
+
         response = self._resource_deserialize(response)
 
         meta = response.get('meta')
@@ -254,13 +255,14 @@ class Readability(ReadabilityCore):
         return self._get_resource(('articles', id), Article)
 
 
-    def get_bookmarks(self, archive=None, favorite=None, domain=None, limit=None, **filters):
+    def get_bookmarks(self, archive=None, favorite=None, domain=None, order=None, limit=None, **filters):
         """Gets a list of bookmarks."""
 
         filters.update(
             archive=archive,
             favorite=archive,
             domain=domain,
+            order=order
         )
 
         filters = to_api(

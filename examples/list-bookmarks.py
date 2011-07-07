@@ -28,7 +28,7 @@ def main():
 
     rdd = setup_rdd()
 
-    bookmarks = rdd.get_me().bookmarks()
+    bookmarks = rdd.get_me().bookmarks(order='-date_added')
 
     for mark in bookmarks:
         print '- %s (%s)' % (mark.article.title, mark.article.domain)
