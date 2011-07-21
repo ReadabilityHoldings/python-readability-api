@@ -1,7 +1,7 @@
 Readability Examples
 ====================
 
-You need to set the following environment variables set:
+You need to have the following environment variables set:
 
 - ``READABILITY_CONSUMER_KEY``
 - ``READABILITY_CONSUMER_SECRET``
