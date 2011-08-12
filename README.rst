@@ -1,7 +1,7 @@
 python-readability
 ==================
 
-This module provides a reference implimentation for consuming the
+This module provides a reference implementation for consuming the
 Readability API.
 
 
@@ -36,7 +36,7 @@ Get user info::
     <user name="username">
 
 
-List a users bookmarks::
+List a user's bookmarks::
 
     >>> rdd.get_bookmarks()
     [<bookmark "1">, <bookmark "3">, <bookmark "5">, <bookmark "7">]
@@ -65,7 +65,7 @@ Installing python-readability is easy::
 
     $ pip install readability-api
 
-Of, if you must::
+Or, if you must::
 
     $ easy_install readability-api
 
