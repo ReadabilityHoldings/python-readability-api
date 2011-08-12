@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-list-bookmarks.py
+add-bookmark.py
 ~~~~~~~~~~~~~~~~~
 
 This module is an example of how to harness the Readability API w/ oAuth.
@@ -14,8 +14,8 @@ This module expects the following environment variables to be set:
 - READABILITY_ACCESS_TOKEN
 - READABILITY_ACCESS_SECRET
 
-Once you have your consumer keys setup, run the following to get your
-access tokens::
+Once you have your consumer keys set up, run the following to get your
+access tokens:
 
     $ ./login-xauth.py <username> <password>
 
@@ -28,10 +28,15 @@ def main():
 
     rdd = setup_rdd()
 
-    bookmarks = rdd.get_me().bookmarks(order='-date_added')
+    bookmark_id = raw_input('Enter an ID of a bookmark to toggle favorite status for: ')
+    bookmark = rdd.get_bookmark(bookmark_id)
 
-    for mark in bookmarks:
-        print '- %s (%s)' % (mark.article.title, mark.article.domain)
+    print "Original bookmark is: %s" % (bookmark,)
+
+    bookmark.favorite = not bookmark.favorite
+    bookmark.update()
+
+    print "Bookmark is now: %s" % (bookmark,)
 
 
 if __name__ == '__main__':

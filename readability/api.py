@@ -44,20 +44,21 @@ def raise_for_admin(status_code):
         raise PermissionsError('Resource for Readability Admins only.')
 
 
-def raise_for_status(status_code):
+def raise_for_status(response):
     """Rasies appropriate errors for given HTTP Status, if neccesary."""
 
-    status_code = int(status_code)
+    status_code = int(response['status'])
 
     status_map = {
+        400: BadRequestError,
         401: AuthenticationError,
         404: MissingError,
         403: PermissionsError,
+        500: ServerError,
     }
 
     if status_code in status_map:
-        raise status_map[status_code]
-
+        raise status_map[status_code](response=response)
 
 
 class ReadabilityCore(object):
@@ -128,7 +129,7 @@ class ReadabilityCore(object):
             settings.verbose.write('%s\n' % (url,))
 
         r, content = self.client.request(url, method='GET')
-        raise_for_status(r['status'])
+        raise_for_status(r)
 
         return content
 
@@ -140,6 +141,7 @@ class ReadabilityCore(object):
 
         params = urllib.urlencode(params)
         r, content =  self.client.request(url, method='POST', body=params)
+        raise_for_status(r)
 
         return r
 
@@ -177,6 +179,7 @@ class ReadabilityCore(object):
         items = []
 
         response = self._get_http_resource(key, params=kwargs)
+
         response = self._resource_deserialize(response)
 
         meta = response.get('meta')
@@ -208,11 +211,7 @@ class ReadabilityCore(object):
 
         r = self._post_http_resource(http_resource, params=kwargs)
 
-        if r['status'] in ('200', '202', '409'):
-            return r
-        else:
-            return False
-
+        return r
 
     def _delete_resource(self, http_resource):
         """DELETEs API Resource of given path."""
@@ -256,13 +255,14 @@ class Readability(ReadabilityCore):
         return self._get_resource(('articles', id), Article)
 
 
-    def get_bookmarks(self, archive=None, favorite=None, domain=None, limit=None, **filters):
+    def get_bookmarks(self, archive=None, favorite=None, domain=None, order=None, limit=None, **filters):
         """Gets a list of bookmarks."""
 
         filters.update(
             archive=archive,
             favorite=archive,
             domain=domain,
+            order=order
         )
 
         filters = to_api(
@@ -353,6 +353,9 @@ class Readability(ReadabilityCore):
 
         r = self._post_resource(('bookmarks'), url=url, favorite=favorite, archive=archive)
 
+        if r['status'] not in ('200','202'):
+            raise ResponseError('')
+
         loc = r['location']
         resource = loc.split('/').pop()
 
@@ -363,15 +366,35 @@ class Readability(ReadabilityCore):
 # Exceptions
 # ----------
 
+class APIError(Exception):
+    def __init__(self, msg=None, response=None):
+        if msg is None:
+            self.msg = self.__doc__
+        else:
+            self.msg = msg
+            
+        self.response = response
 
-class PermissionsError(Exception):
+    def __str__(self):
+        if self.response is not None:
+            return "%s - response: %s" % (repr(self.msg), repr(self.response))
+        else:
+            return repr(self.msg)
+        
+class PermissionsError(APIError):
     """You do not have proper permission."""
 
-class AuthenticationError(Exception):
+class AuthenticationError(APIError):
     """Authentication failed."""
 
-class ResponseError(ValueError):
+class ResponseError(APIError):
     """The API Response was unexpected."""
 
-class MissingError(ValueError):
+class MissingError(APIError):
     """The Resource does not exist."""
+
+class BadRequestError(APIError):
+    """The request could not be understood due to bad syntax. Check your request and try again."""
+    
+class ServerError(APIError):
+    """The server encountered an error and was unable to complete your request."""

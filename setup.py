@@ -11,7 +11,7 @@ from setuptools import setup
 
 
 if sys.argv[-1] == 'publish':
-    os.system("python setup.py sdist upload")
+    os.system('python setup.py sdist upload')
     sys.exit()
 
 with open('reqs.txt', 'r') as f:
@@ -22,7 +22,7 @@ if sys.version_info[:2] < (2,6):
 
 setup(
     name='readability-api',
-    version='0.1.1',
+    version='0.1.2',
     description='Python wrapper for the Readability API.',
     long_description=open('README.rst').read(),
     author='The Readability Team',
