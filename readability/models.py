@@ -98,6 +98,7 @@ class Article(BaseResource):
         self.author = None
         self.word_count = None
         self.content = None
+        self.excerpt = None
         self.date_published = None
         self.next_page_href = None
         self.processed = None
@@ -115,8 +116,8 @@ class Article(BaseResource):
             obj=Article(), in_dict=d,
             string_keys = (
                 'id', 'domain', 'title', 'url', 'short_url', 'author',
-                'word_count', 'content', 'next_page_href', 'processed',
-                'content_size'
+                'word_count', 'content', 'excerpt', 'next_page_href',
+                'processed', 'content_size',
             ),
             date_keys = ('date_published',),
             _rdd = rdd
