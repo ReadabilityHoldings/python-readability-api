@@ -22,7 +22,7 @@ if sys.version_info[:2] < (2,6):
 
 setup(
     name='readability-api',
-    version='0.1.2',
+    version='0.1.3',
     description='Python wrapper for the Readability API.',
     long_description=open('README.rst').read(),
     author='The Readability Team',
