@@ -353,7 +353,10 @@ class Readability(ReadabilityCore):
 
         r = self._post_resource(('bookmarks'), url=url, favorite=favorite, archive=archive)
 
-        if r['status'] not in ('200','202'):
+	# As 409 status code indicates an already bookmarked
+	# url, it should be considered as valid, and return
+	# the bookmark it points to.
+        if r['status'] not in ('200','202', '409'):
             raise ResponseError('')
 
         loc = r['location']
