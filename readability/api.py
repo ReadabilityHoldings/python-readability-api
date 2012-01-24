@@ -353,7 +353,10 @@ class Readability(ReadabilityCore):
 
         r = self._post_resource(('bookmarks'), url=url, favorite=favorite, archive=archive)
 
-        if r['status'] not in ('200','202'):
+        # As 409 status code indicates an already bookmarked
+        # url, it should be considered as valid, and return
+        # the bookmark it points to.
+        if r['status'] not in ('200','202', '409'):
             raise ResponseError('')
 
         loc = r['location']
@@ -372,7 +375,7 @@ class APIError(Exception):
             self.msg = self.__doc__
         else:
             self.msg = msg
-            
+
         self.response = response
 
     def __str__(self):
@@ -380,7 +383,7 @@ class APIError(Exception):
             return "%s - response: %s" % (repr(self.msg), repr(self.response))
         else:
             return repr(self.msg)
-        
+
 class PermissionsError(APIError):
     """You do not have proper permission."""
 
@@ -395,6 +398,6 @@ class MissingError(APIError):
 
 class BadRequestError(APIError):
     """The request could not be understood due to bad syntax. Check your request and try again."""
-    
+
 class ServerError(APIError):
     """The server encountered an error and was unable to complete your request."""
