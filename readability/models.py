@@ -40,6 +40,7 @@ class Bookmark(BaseResource):
         self.archive = None
         self.date_archived = None
         self.date_opened = None
+        self.date_added = None
         self.article = None
 
 
@@ -56,7 +57,7 @@ class Bookmark(BaseResource):
                 'id', 'user_id', 'read_percent', 'favorite', 'archive',
                 'author',
             ),
-            date_keys = ('date_updated', 'date_archived', 'date_opened'),
+            date_keys = ('date_updated', 'date_archived', 'date_opened', 'date_added'),
             object_map = {'article': Article},
             _rdd = rdd
         )
