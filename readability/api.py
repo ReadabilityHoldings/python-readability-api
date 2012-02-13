@@ -260,7 +260,7 @@ class Readability(ReadabilityCore):
 
         filters.update(
             archive=archive,
-            favorite=archive,
+            favorite=favorite,
             domain=domain,
             order=order
         )
