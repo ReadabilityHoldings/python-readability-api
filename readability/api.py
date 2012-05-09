@@ -129,6 +129,7 @@ class ReadabilityCore(object):
             settings.verbose.write('%s\n' % (url,))
 
         r, content = self.client.request(url, method='GET')
+
         raise_for_status(r)
 
         return content
