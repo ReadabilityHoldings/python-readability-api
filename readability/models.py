@@ -12,7 +12,6 @@ from .helpers import to_python, to_api
 
 class BaseResource(object):
     """A Base BaseResource object."""
-
     def __init__(self):
         super(BaseResource, self).__init__()
         self._rdd = None
@@ -30,7 +29,6 @@ class BaseResource(object):
 
 class Bookmark(BaseResource):
     """Bookmark API Model."""
-
     def __init__(self):
         self.id = None
         self.user_id = None
@@ -89,7 +87,6 @@ class Bookmark(BaseResource):
 
 
 class Article(BaseResource):
-
     def __init__(self):
         self.id = None
         self.domain = None
@@ -105,10 +102,8 @@ class Article(BaseResource):
         self.processed = None
         self.content_size = None
 
-
     def __repr__(self):
         return '<article id="%s">' % (self.id,)
-
 
     @staticmethod
     def new_from_dict(d, rdd=None):
@@ -127,7 +122,6 @@ class Article(BaseResource):
 
 
 class Domain(BaseResource):
-
     def __init__(self):
         super(Domain, self).__init__()
 
@@ -163,7 +157,6 @@ class Domain(BaseResource):
 
 
 class Contribution(BaseResource):
-
     def __init__(self):
         super(Contribution, self).__init__()
 
@@ -192,12 +185,13 @@ class Contribution(BaseResource):
 
 class User(BaseResource):
     """User API Model."""
-
     def __init__(self):
         self.username = None
         self.first_name = None
         self.last_name = None
         self.date_joined = None
+        self.avatar_url = None
+        self.kindle_email_address = None
 
 
     def __repr__(self):
@@ -206,10 +200,14 @@ class User(BaseResource):
 
     @staticmethod
     def new_from_dict(d, rdd=None):
-
         return to_python(
             obj=User(), in_dict=d,
-            string_keys = ('username', 'first_name'),
+            string_keys = (
+                'username',
+                'first_name',
+                'last_name',
+                'avatar_url',
+                'kindle_email_address'),
             date_keys = ('date_joined',),
             _rdd=rdd
         )
@@ -231,7 +229,3 @@ class User(BaseResource):
             return self._rdd.get_contributions(user=self.username, **filters)
         else:
             return self._rdd.get_contributions_by_user(self.username, **filters)
-
-
-
-
