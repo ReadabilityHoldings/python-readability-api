@@ -12,11 +12,10 @@ import urllib
 import urlparse
 
 import oauth2
-from decorator import decorator
 
-from .config import settings
+from . import settings
 from .models import Bookmark, Article, Domain, Contribution, User
-from .helpers import is_collection, to_python, to_api, get_scope
+from .helpers import is_collection, to_api
 
 
 try:
@@ -24,19 +23,6 @@ try:
 except ImportError:
     import simplejson as json
 
-
-@decorator
-def admin_only(f, *args, **kwargs):
-    """Admin-level API constraint decorator.
-
-    Raises PermissionsError if settings.admin is not True.
-    """
-
-    if not settings.admin:
-        func = get_scope(f, args)
-        raise PermissionsError('%s is for Readability Admins only.' % (func,))
-
-    return f(*args, **kwargs)
 
 
 def raise_for_admin(status_code):
@@ -67,7 +53,6 @@ class ReadabilityCore(object):
     def __init__(self):
         self.token = None
         self.username = None
-        self.settings = settings
 
 
     def setup_client(self, token, consumer_key, consumer_secret):
@@ -232,7 +217,6 @@ class Readability(ReadabilityCore):
         super(Readability, self).__init__()
 
 
-    @admin_only
     def get_articles(self, author=None, user=None, domain=None, limit=None, **filters):
         """Gets a list of articles."""
 
@@ -278,7 +262,6 @@ class Readability(ReadabilityCore):
         return self._get_resources('bookmarks', Bookmark, limit=limit, **filters)
 
 
-    @admin_only
     def get_bookmarks_by_user(self, username, **filters):
         """Gets bookmark of given user."""
 
@@ -297,14 +280,12 @@ class Readability(ReadabilityCore):
         return self._get_resources('contributions', Contribution, limit=limit, params=filters)
 
 
-    @admin_only
     def get_contributions_by_user(self, username, **filters):
         """Gets a list of contributions by given username."""
 
         return self.get_contributions(user=username, **filters)
 
 
-    @admin_only
     def get_domains(self, domain=None, limit=None):
         """Gets a list of domains.
 
@@ -318,7 +299,6 @@ class Readability(ReadabilityCore):
         return self._get_resources('domains', Domain, limit=limit, params=filters)
 
 
-    @admin_only
     def get_domain(self, id):
         """Gets domain of given ID."""
 
@@ -331,7 +311,6 @@ class Readability(ReadabilityCore):
         return self._get_resource(('users', '_current'), User)
 
 
-    @admin_only
     def get_users(self, limit=None, **filters):
         """Returns a list of users."""
 
@@ -341,7 +320,6 @@ class Readability(ReadabilityCore):
 
 
 
-    @admin_only
     def get_user(self, username='_current'):
         """Retrives a given user."""
 

@@ -56,7 +56,7 @@ class Settings(object):
 settings = Settings()
 
 settings.admin = False
-settings.base_url = 'https://www.readability.com/api/rest/v1/%s'
+settings.base_url = 'https://dev.readability.8000/api/rest/v1/%s'
 settings.request_token_url = 'oauth/request_token/'
 settings.access_token_url = 'oauth/access_token/'
 settings.auth_url = 'oauth/authorize/'

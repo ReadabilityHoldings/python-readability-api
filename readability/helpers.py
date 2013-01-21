@@ -7,7 +7,6 @@ readability.helpers
 This module provides various helper functions to the rest of the package.
 """
 
-import inspect
 from datetime import datetime
 
 from dateutil.parser import parse as parse_datetime
@@ -25,7 +24,8 @@ def is_collection(obj):
     return val
 
 
-def to_python(obj, in_dict, string_keys=None, date_keys=None, object_map=None, **kwargs):
+def to_python(obj, in_dict, string_keys=None, date_keys=None, int_keys=None,
+    object_map=None, **kwargs):
     """Extends a given object for API Consumption.
 
     :param obj: Object to extend.
@@ -37,7 +37,6 @@ def to_python(obj, in_dict, string_keys=None, date_keys=None, object_map=None, *
 
     if string_keys:
         for in_key in string_keys:
-            # print in_key
             obj.__dict__[in_key] = in_dict.get(in_key)
 
     if date_keys:
@@ -49,6 +48,7 @@ def to_python(obj, in_dict, string_keys=None, date_keys=None, object_map=None, *
                 out_date = None
 
             obj.__dict__[in_key] = out_date
+
 
     if object_map:
 
@@ -93,27 +93,3 @@ def to_api(in_dict, int_keys=None, date_keys=None):
             del in_dict[k]
 
     return in_dict
-
-
-# from kennethreitz/showme
-def get_scope(f, args=None):
-    """Get scope of given function for Exception scopes."""
-
-    if args is None:
-        args=list()
-
-    scope = inspect.getmodule(f).__name__
-    # guess that function is a method of it's class
-    try:
-        if f.func_name in dir(args[0].__class__):
-            scope += '.' + args[0].__class__.__name__
-            scope += '.' + f.__name__
-        else:
-            scope += '.' + f.__name__
-    except IndexError:
-        scope += '.' + f.__name__
-
-    # scrub readability.models namespace
-    scope = scope.replace('readability.api.', '')
-
-    return scope
