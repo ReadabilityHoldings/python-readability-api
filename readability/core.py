@@ -9,14 +9,13 @@ This module provides the core functionality of python-readability.
 """
 
 import oauth2
-import urlparse
 import urllib
 from cgi import parse_qsl
 
 from .api import Readability, settings, AuthenticationError
 
 
-__version__ = '0.1.1'
+__version__ = '0.2.0'
 __license__ = 'MIT'
 __author__ = 'The Readability Team'
 
@@ -26,7 +25,7 @@ def oauth(consumer_key, consumer_secret, callback=None, token=None):
     """Returns an authenticated Readability object, via OAuth.
 
     TODO: Setup callback URLs.
-    TODO: Cleanup.
+    TODO: Get rid of recursion.
     """
 
     if token:

@@ -25,11 +25,6 @@ except ImportError:
 
 
 
-def raise_for_admin(status_code):
-    if not settings.admin:
-        raise PermissionsError('Resource for Readability Admins only.')
-
-
 def raise_for_status(response):
     """Rasies appropriate errors for given HTTP Status, if neccesary."""
 
@@ -50,7 +45,7 @@ def raise_for_status(response):
 class ReadabilityCore(object):
     """The main Readability API interface."""
 
-    def __init__(self):
+    def __init__(self, token):
         self.token = None
         self.username = None
 
@@ -66,7 +61,6 @@ class ReadabilityCore(object):
         self.username = self.get_me().username
 
         return True
-
 
     @property
     def token_tuple(self):
@@ -350,7 +344,7 @@ class APIError(Exception):
             self.msg = self.__doc__
         else:
             self.msg = msg
-            
+
         self.response = response
 
     def __str__(self):
@@ -358,7 +352,7 @@ class APIError(Exception):
             return "%s - response: %s" % (repr(self.msg), repr(self.response))
         else:
             return repr(self.msg)
-        
+
 class PermissionsError(APIError):
     """You do not have proper permission."""
 
@@ -373,6 +367,6 @@ class MissingError(APIError):
 
 class BadRequestError(APIError):
     """The request could not be understood due to bad syntax. Check your request and try again."""
-    
+
 class ServerError(APIError):
     """The server encountered an error and was unable to complete your request."""
