@@ -9,7 +9,6 @@ You can use it to:
 
 - Add/Remove Bookmarks
 - List Articles
-- View Contributions
 
 
 Authentication options
