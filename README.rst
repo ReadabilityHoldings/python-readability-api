@@ -78,7 +78,7 @@ License
 
 The MIT License::
 
-    Copyright (C) 2011 by Readability, LLC
+    Copyright (C) 2013 by Readability, LLC
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal

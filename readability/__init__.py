@@ -1,1 +1,2 @@
-from core import *
+from .clients import BaseClient as Client
+from .auth import oauth, xauth
