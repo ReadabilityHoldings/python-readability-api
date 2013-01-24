@@ -17,6 +17,18 @@ Authentication options
 - OAuth (API Keys + User Authorization)
 
 
+Version 0.2.0 Highlights
+------------------------
+
+- No more 2.5 support. Sorry.
+- No more models. Deal with the JSON that comes back from the server.
+
+Version 0.2.0 Soon to Haves
+---------------------------
+
+- Python 3 support (hopefully)
+
+
 Usage
 -----
 

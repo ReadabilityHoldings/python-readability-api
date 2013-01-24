@@ -8,17 +8,13 @@ This module provies the core Readability API client.
 
 """
 
+import json
 import logging
 import urllib
 
 import oauth2
 
 from .utils import filter_args_to_dict
-
-try:
-    import json
-except ImportError:
-    import simplejson as json
 
 
 logger = logging.getLogger(__name__)
@@ -75,7 +71,7 @@ class BaseClient(object):
             resource = '{0}?{1}'.format(
                 resource, urllib.urlencode(query_params))
 
-        return self.base_url.format(resource)
+        return self.base_url_template.format(resource)
 
     def _create_response(self, response, content):
         """Modify the httplib2.Repsonse object to return.
@@ -103,10 +99,14 @@ class BaseClient(object):
 
         """
         response.raw_content = content
-        if response.status >= 400:
-            content = {'error_message': content}
-        else:
+        try:
             content = json.loads(content)
+        except ValueError:
+            # didn't get json output. Assuming it's a string
+            if response.status >= 400:
+                content = {'error_message': content}
+            else:
+                content = {'message': content}
         response.content = content
 
         return response
@@ -170,9 +170,10 @@ class BaseClient(object):
 
         :param tags: Comma separated string of tags to filter bookmarks.
         :type tags: string
+
         """
         filter_dict = filter_args_to_dict(filters, ACCEPTED_BOOKMARK_FILTERS)
-        url = self._generate_url('/bookmarks', query_params=filter_dict)
+        url = self._generate_url('bookmarks', query_params=filter_dict)
         return self.get(url)
 
     def get_bookmark(self, bookmark_id):
@@ -182,6 +183,7 @@ class BaseClient(object):
 
         :param bookmark_id: ID of the bookmark to retrieve.
         :type bookmark_id: integer
+
         """
         url = self._generate_url('bookmarks/{0}'.format(bookmark_id))
         return self.get(url)
@@ -189,19 +191,9 @@ class BaseClient(object):
     def add_bookmark(self, url, favorite=False, archive=False):
         """Adds given bookmark."""
 
-        url = self._generate_url('bookmarks')
+        rdb_url = self._generate_url('bookmarks')
         params = dict(url=url, favorite=favorite, archive=archive)
-        r, content = self.post(url, params)
-        # uhhhhhhh
-        return r, content
-
-        #if r['status'] not in ('200','202'):
-            #raise ResponseError('')
-
-        #loc = r['location']
-        #resource = loc.split('/').pop()
-
-        #return self.get_bookmark(resource)
+        return self.post(rdb_url, params)
 
     def delete_bookmark(self, bookmark_id):
         """Delete a single bookmark represented by `bookmark_id`.

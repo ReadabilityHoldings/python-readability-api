@@ -17,9 +17,6 @@ if sys.argv[-1] == 'publish':
 with open('reqs.txt', 'r') as f:
     required = f.readlines()
 
-if sys.version_info[:2] < (2,6):
-    required.append('simplejson')
-
 setup(
     name='readability-api',
     version='0.2.0',

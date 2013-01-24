@@ -48,6 +48,8 @@ def cast_datetime_filter(value):
 
     elif isinstance(value, datetime):
         dtime = value
+    else:
+        raise ValueError('Received value of type {0}'.format(type(value)))
 
     return dtime.isoformat()
 
@@ -79,14 +81,14 @@ def filter_args_to_dict(filter_dict, accepted_filter_keys=[]):
             logger.debug(
                 'Filter was not in accepted_filter_keys or value is None.')
             # skip it
-            next
+            continue
         filter_type = filter_type_map.get(k, None)
         
         if filter_type is None:
             logger.debug('Filter key not foud in map.')
             # hmm, this was an acceptable filter type but not in the map...
-            # going to remove it from filters. Skip it.
-            next
+            # Going to skip it.
+            continue
 
         # map of casting funcitons to filter types
         filter_cast_map = {
