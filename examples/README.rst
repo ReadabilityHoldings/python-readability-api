@@ -1,6 +1,7 @@
 Readability Examples
 ====================
 
+Make sure to set your consumer key and consumer secret in settings.py
 You need to have the following environment variables set:
 
 - ``READABILITY_CONSUMER_KEY``

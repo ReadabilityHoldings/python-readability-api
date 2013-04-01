@@ -5,25 +5,13 @@
 add-bookmark.py
 ~~~~~~~~~~~~~~~~~
 
-This module is an example of how to harness the Readability API w/ oAuth.
-
-This module expects the following environment variables to be set:
-
-- READABILITY_CONSUMER_KEY
-- READABILITY_CONSUMER_SECRET
-- READABILITY_ACCESS_TOKEN
-- READABILITY_ACCESS_SECRET
-
-Once you have your consumer keys set up, run the following to get your OAuth
-tokens:
-
-    $ ./login-xauth.py <username> <password>
+This module is an example of how to add a bookmark to a user's reading list.
 
 """
 
 import sys
 
-from ext import readability
+from readability import Client
 from ext import get_consumer_keys, get_access_token
 
 
@@ -37,13 +25,12 @@ def main():
 
     token = get_access_token()
 
-    rdd = readability.oauth(c_key, c_secret, token=token)
+    rdb_client = Client(c_key, c_secret, token=token)
 
     url = raw_input('Enter a URL to bookmark: ')
     print url
 
-    bookmark = rdd.add_bookmark(url=url)
-
+    bookmark = rdb_client.add_bookmark(url=url)
     print bookmark
 
 

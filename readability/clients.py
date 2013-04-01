@@ -18,6 +18,7 @@ from .utils import filter_args_to_dict
 
 
 logger = logging.getLogger(__name__)
+#DEFAULT_BASE_URL_TEMPLATE = 'https://readability.com/api/rest/v1/{0}'
 DEFAULT_BASE_URL_TEMPLATE = 'https://readability.com/api/rest/v1/{0}'
 ACCEPTED_BOOKMARK_FILTERS = ['archive', 'favorite', 'domain', 'added_since'
     'added_until', 'opened_since', 'opened_until', 'archived_since'
@@ -26,8 +27,9 @@ ACCEPTED_BOOKMARK_FILTERS = ['archive', 'favorite', 'domain', 'added_since'
 
 
 class BaseClient(object):
-    """Base Readability HTTP API Client.
 
+    """
+    Base Readability HTTP API Client.
     """
 
     def __init__(self, consumer_key, consumer_secret, token_key, token_secret,
@@ -39,16 +41,16 @@ class BaseClient(object):
         self.oauth_client = oauth2.Client(self.consumer, self.token)
 
     def get(self, url):
-        """Make a HTTP GET request to the Readability API.
-
+        """
+        Make a HTTP GET request to the Readability API.
         """
         logger.debug('Making GET request to %s', url)
         return self._create_response(
             *self.oauth_client.request(url, method='GET'))
 
     def post(self, url, post_params=None):
-        """Make a HTTP POST request ot the Readability API.
-
+        """
+        Make a HTTP POST request ot the Readability API.
         """
         params = urllib.urlencode(post_params)
         logger.debug('Making POST request to %s with body %s', url, params)
@@ -56,16 +58,16 @@ class BaseClient(object):
             *self.oauth_client.request(url, method='POST', body=params))
 
     def delete(self, url):
-        """Make a HTTP DELETE request ot the Readability API.
-
+        """
+        Make a HTTP DELETE request ot the Readability API.
         """
         logger.debug('Making DELETE request to %s', url)
         return self._create_response(
             *self.oauth_client.request(url, method='DELETE'))
 
     def _generate_url(self, resource, query_params=None):
-        """Generate a Readability URL to the given resource.
-
+        """
+        Generate a Readability URL to the given resource.
         """
         if query_params:
             resource = '{0}?{1}'.format(
@@ -74,7 +76,8 @@ class BaseClient(object):
         return self.base_url_template.format(resource)
 
     def _create_response(self, response, content):
-        """Modify the httplib2.Repsonse object to return.
+        """
+        Modify the httplib2.Repsonse object to return.
 
         Add two attributes to it:
 
@@ -96,7 +99,6 @@ class BaseClient(object):
 
         :param content: Content received from API
         :type content: string
-
         """
         response.raw_content = content
         try:
@@ -122,7 +124,8 @@ class BaseClient(object):
         return self.get(url)
 
     def get_bookmarks(self, **filters):
-        """Get Bookmarks for the current user.
+        """
+        Get Bookmarks for the current user.
 
         Filters:
 
@@ -170,7 +173,6 @@ class BaseClient(object):
 
         :param tags: Comma separated string of tags to filter bookmarks.
         :type tags: string
-
         """
         filter_dict = filter_args_to_dict(filters, ACCEPTED_BOOKMARK_FILTERS)
         url = self._generate_url('bookmarks', query_params=filter_dict)
@@ -268,8 +270,8 @@ class BaseClient(object):
         return self.get(url)
 
     def get_user(self):
-        """Retrives the current user.
-
+        """
+        Retrives the current user.
         """
         url = self._generate_url('users/_current')
         return self.get(url)

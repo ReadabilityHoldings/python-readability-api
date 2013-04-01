@@ -9,12 +9,7 @@ You can use it to:
 
 - Add/Remove Bookmarks
 - List Articles
-
-
-Authentication options
-
-- XAuth (API Keys + Username/Password)
-- OAuth (API Keys + User Authorization)
+- Add/Remove Tags to Bookmarks
 
 
 Version 0.2.0 Highlights
@@ -22,6 +17,7 @@ Version 0.2.0 Highlights
 
 - No more 2.5 support. Sorry.
 - No more models. Deal with the JSON that comes back from the server.
+
 
 Version 0.2.0 Soon to Haves
 ---------------------------
@@ -33,19 +29,18 @@ Usage
 -----
 
 
-Authentication is simple::
-
-    import readability
-
-    token = readability.xauth('consumer-key', 'consumer-secret', 'username', 'password')
-    rdd = readability.oauth('consumer-key', 'consumer-secret', token=token)
-
-
 Get user info::
 
-    >>> rdd.get_me()
-    <user name="username">
-
+    >>> response = rdd.get_user()
+    <HTTPResponse object >
+    >>> reponse.content
+    {
+        'username': <username>,
+        'first_name': <first_name>,
+        'last_name': <last_name>,
+        'avatar_url': <avatar_url>,
+        'date_joined': <date
+        
 
 List a user's bookmarks::
 
@@ -114,4 +109,4 @@ The MIT License::
 API Access
 ----------
 
-Don't have a Readability API key? `Send us an email <https://www.readability.com/contact>`_.
+Don't have a Readability API key? Get one `here <https://www.readability.com/account/api>`_.
