@@ -55,7 +55,7 @@ def cast_datetime_filter(value):
 
 
 def cast_integer_filter(value):
-    """Case an integer filter value.
+    """Cast an integer filter value.
 
     Theses are usually booleans in Python but they need to be sent as
     1s and 0s to the API.

@@ -193,9 +193,7 @@ class ReaderClient(object):
         """Adds given bookmark."""
 
         rdb_url = self._generate_url('bookmarks')
-        fav_param = '1' if favorite else '0'
-        archive_param = '1' if archive else '0'
-        params = dict(url=url, favorite=fav_param, archive=archive_param)
+        params = dict(url=url, favorite=int(favorite), archive=int(archive))
         return self.post(rdb_url, params)
 
     def delete_bookmark(self, bookmark_id):
