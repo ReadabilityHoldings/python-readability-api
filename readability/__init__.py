@@ -1,2 +1,2 @@
-from .clients import BaseClient as Client
+from .clients import ReaderClient
 from .auth import xauth

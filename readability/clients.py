@@ -18,7 +18,6 @@ from .utils import filter_args_to_dict
 
 
 logger = logging.getLogger(__name__)
-#DEFAULT_BASE_URL_TEMPLATE = 'https://readability.com/api/rest/v1/{0}'
 DEFAULT_BASE_URL_TEMPLATE = 'https://readability.com/api/rest/v1/{0}'
 ACCEPTED_BOOKMARK_FILTERS = ['archive', 'favorite', 'domain', 'added_since'
     'added_until', 'opened_since', 'opened_until', 'archived_since'
@@ -26,7 +25,7 @@ ACCEPTED_BOOKMARK_FILTERS = ['archive', 'favorite', 'domain', 'added_since'
     'only_deleted', 'tags']
 
 
-class BaseClient(object):
+class ReaderClient(object):
 
     """
     Base Readability HTTP API Client.

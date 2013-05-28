@@ -3,14 +3,14 @@
 from unittest import TestCase
 
 from readability import xauth
-from readability.clients import BaseClient
+from readability.clients import ReaderClient
 from readability.tests.settings import \
         CONSUMER_KEY, CONSUMER_SECRET, PASSWORD, USERNAME
 
 
 
-class BaseClientNoBookmarkTest(TestCase):
-    """Tests for the Readability BaseClient class that need no bookmarks.
+class ReaderClientNoBookmarkTest(TestCase):
+    """Tests for the Readability ReaderClient class that need no bookmarks.
 
     """
     def setUp(self):
@@ -21,7 +21,7 @@ class BaseClientNoBookmarkTest(TestCase):
         self.token_key = token_pair[0]
         self.token_secret = token_pair[1]
 
-        self.base_client = BaseClient(CONSUMER_KEY, CONSUMER_SECRET,
+        self.base_client = ReaderClient(CONSUMER_KEY, CONSUMER_SECRET,
             self.token_key, self.token_secret)
 
     def test_get_article(self):
@@ -70,7 +70,7 @@ class BaseClientNoBookmarkTest(TestCase):
         self.assertTrue(len(tag_response.content['tags']) > 0)
 
 
-class BaseClientSingleBookmarkTest(TestCase):
+class ReaderClientSingleBookmarkTest(TestCase):
     """Tests that only need one bookmark
 
     """
@@ -82,7 +82,7 @@ class BaseClientSingleBookmarkTest(TestCase):
         self.token_key = token_pair[0]
         self.token_secret = token_pair[1]
 
-        self.base_client = BaseClient(CONSUMER_KEY, CONSUMER_SECRET,
+        self.base_client = ReaderClient(CONSUMER_KEY, CONSUMER_SECRET,
             self.token_key, self.token_secret)
 
         self.url = 'http://www.theatlantic.com/technology/archive/2013/01/the-never-before-told-story-of-the-worlds-first-computer-art-its-a-sexy-dame/267439/' 
@@ -157,7 +157,6 @@ class BaseClientSingleBookmarkTest(TestCase):
             self.assertTrue('id' in single_tag_resp.content)
             self.assertTrue('text' in single_tag_resp.content)
 
-
         # delete tags
         for tag in retag_response.content['tags']:
             del_response = self.base_client.delete_tag_from_bookmark(
@@ -170,7 +169,7 @@ class BaseClientSingleBookmarkTest(TestCase):
         self.assertEqual(len(tag_response.content['tags']), 0)
 
 
-class BaseClientMultipleBookmarkTest(TestCase):
+class ReaderClientMultipleBookmarkTest(TestCase):
     """Tests for bookmark functionality
 
     """
@@ -183,7 +182,7 @@ class BaseClientMultipleBookmarkTest(TestCase):
         self.token_key = token_pair[0]
         self.token_secret = token_pair[1]
 
-        self.base_client = BaseClient(CONSUMER_KEY, CONSUMER_SECRET,
+        self.base_client = ReaderClient(CONSUMER_KEY, CONSUMER_SECRET,
             self.token_key, self.token_secret)
 
         self.urls = [
