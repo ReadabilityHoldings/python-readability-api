@@ -53,8 +53,6 @@ class ReaderClient(object):
         """
         params = urllib.urlencode(post_params)
         logger.debug('Making POST request to %s with body %s', url, params)
-        print url
-        print params
         return self._create_response(
             *self.oauth_client.request(url, method='POST', body=params))
 
