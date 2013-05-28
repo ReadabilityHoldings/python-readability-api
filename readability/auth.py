@@ -4,7 +4,7 @@
 readability.core
 ~~~~~~~~~~~~~~~~
 
-This module provides the authentication functionality for the Readability
+This module provides the xauth functionality for the Readability
 HTTP API.
 
 """
@@ -22,7 +22,8 @@ ACCESS_TOKEN_URL = 'oauth/access_token/'
 
 def xauth(consumer_key, consumer_secret, username, password,
     base_url_template=DEFAULT_BASE_URL_TEMPLATE):
-    """Returns an OAuth token that can be used with clients.BaseClient.
+    """
+    Returns an OAuth token that can be used with clients.ReaderClient.
 
     :param consumer_key: Your Readability consumer key
     :type consumer_key: string
