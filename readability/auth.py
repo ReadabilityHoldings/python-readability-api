@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-readability.core
+readability.auth
 ~~~~~~~~~~~~~~~~
 
 This module provides the xauth functionality for the Readability

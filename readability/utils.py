@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
 """
-readability.helpers
-~~~~~~~~~~~~~~~~~~~
+readability.utils
+~~~~~~~~~~~~~~~~~
 
-This module provides various helper functions to the rest of the package.
+This module provides various utils to the rest of the package.
+
 """
+
 import logging
 
 from datetime import datetime
@@ -83,7 +85,7 @@ def filter_args_to_dict(filter_dict, accepted_filter_keys=[]):
             # skip it
             continue
         filter_type = filter_type_map.get(k, None)
-        
+
         if filter_type is None:
             logger.debug('Filter key not foud in map.')
             # hmm, this was an acceptable filter type but not in the map...
