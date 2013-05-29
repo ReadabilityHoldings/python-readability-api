@@ -71,4 +71,3 @@ class XAuthTestCase(TestCase):
         """
         token = xauth(CONSUMER_KEY, CONSUMER_SECRET, USERNAME, PASSWORD)
         self.assertEqual(len(token), 2)
-        

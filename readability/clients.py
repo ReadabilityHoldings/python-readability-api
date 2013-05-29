@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 """
-readability.client
-~~~~~~~~~~~~~~~
+readability.clients
+~~~~~~~~~~~~~~~~~~~
 
-This module provies the core Readability API client.
+This module provies a client for the Reader API.
 
 """
 
