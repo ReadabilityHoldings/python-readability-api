@@ -18,21 +18,67 @@ from .utils import filter_args_to_dict
 
 
 logger = logging.getLogger(__name__)
-DEFAULT_BASE_URL_TEMPLATE = 'https://readability.com/api/rest/v1/{0}'
+DEFAULT_READER_URL_TEMPLATE = 'https://readability.com/api/rest/v1/{0}'
+DEFAULT_PARSER_URL_TEMPLATE = 'https://readability.com/api/content/v1/parser{0}'
 ACCEPTED_BOOKMARK_FILTERS = ['archive', 'favorite', 'domain', 'added_since'
     'added_until', 'opened_since', 'opened_until', 'archived_since'
     'archived_until', 'updated_since', 'updated_until', 'page', 'per_page',
     'only_deleted', 'tags']
 
 
-class ReaderClient(object):
+class BaseClient(object):
+    """A base class for Readability clients.
 
     """
-    Base Readability HTTP API Client.
+
+    def _create_response(self, response, content):
+        """
+        Modify the httplib2.Repsonse object to return.
+
+        Add two attributes to it:
+
+        1) `raw_content` - this is the untouched content returned from the
+        server.
+
+        2) `content` - this is a serialized response using json.loads.
+
+        If the response was an error of any kind, the reponse content
+        will be:
+
+        ::
+            {'error_message': <message from server>}
+
+        The above will also be ran through json.loads.
+
+        :param response: Repsonse received from API
+        :type response: httplib2.Response
+
+        :param content: Content received from API
+        :type content: string
+        """
+        response.raw_content = content
+        try:
+            content = json.loads(content)
+        except ValueError:
+            # didn't get json output. Assuming it's a string
+            if response.status >= 400:
+                content = {'error_message': content}
+            else:
+                content = {'message': content}
+        response.content = content
+
+        return response
+
+
+class ReaderClient(object):
+    """Client for interacting with the Readability Reader API.
+
+    Docs can be found at `http://www.readability.com/developers/api/reader`.
+
     """
 
     def __init__(self, consumer_key, consumer_secret, token_key, token_secret,
-        base_url_template=DEFAULT_BASE_URL_TEMPLATE):
+        base_url_template=DEFAULT_READER_URL_TEMPLATE):
 
         self.base_url_template = base_url_template
         self.token = oauth2.Token(token_key, token_secret)
@@ -73,44 +119,6 @@ class ReaderClient(object):
                 resource, urllib.urlencode(query_params))
 
         return self.base_url_template.format(resource)
-
-    def _create_response(self, response, content):
-        """
-        Modify the httplib2.Repsonse object to return.
-
-        Add two attributes to it:
-
-        1) `raw_content` - this is the untouched content returned from the
-        server.
-
-        2) `content` - this is a serialized response using json.loads.
-
-        If the response was an error of any kind, the reponse content
-        will be:
-
-        ::
-            {'error_message': <message from server>}
-
-        The above will also be ran through json.loads.
-
-        :param response: Repsonse received from API
-        :type response: httplib2.Response
-
-        :param content: Content received from API
-        :type content: string
-        """
-        response.raw_content = content
-        try:
-            content = json.loads(content)
-        except ValueError:
-            # didn't get json output. Assuming it's a string
-            if response.status >= 400:
-                content = {'error_message': content}
-            else:
-                content = {'message': content}
-        response.content = content
-
-        return response
 
     def get_article(self, article_id):
         """Get a single article represented by `article_id`.
@@ -274,3 +282,70 @@ class ReaderClient(object):
         """
         url = self._generate_url('users/_current')
         return self.get(url)
+
+
+class ParserClient(BaseClient):
+    """Client for interacting with the Readability Parser API.
+
+    Docs can be found at `http://www.readability.com/developers/api/parser`.
+
+    """
+
+    def __init__(self, token, base_url_template=DEFAULT_PARSER_URL_TEMPLATE):
+        """Initialize client.
+
+        :param token: parser API token.
+        :param base_url_template (optional): Template used to build URL to
+        which requests will be sent. This shouldn't need to be passed as the
+        main purpose for it is testing environments that the user probably
+        doesn't have access to (staging, local dev, etc).
+        """
+        self.token = token
+
+    def get_root(self):
+        """Send a GET request to the root resource of the Parser API.
+
+        """
+        pass
+
+
+    def get_article_content(self, url=None, article_id=None, max_pages=25):
+        """Send a GET request to the `parser` endpoint of the parser API to get
+        article content.
+
+        The article can be identified by either a URL or an id that exists
+        in Readability.
+
+        Note that either the `url` or `article_id` param must be passed.
+
+        :param url (optional): The url of an article whose content is wanted.
+        :param article_id (optional): The id of an article in the Readability
+            system whose content is wanted.
+        :param max_pages: The maximum number of pages to parse and combine.
+            The default is 25.
+        """
+        pass
+
+
+    def get_article_status(self, url=None, article_id=None):
+        """Send a HEAD request to the `parser` endpoint to the parser API to
+        get the articles status.
+
+        Note that either the `url` or `article_id` param must be passed.
+
+        :param url (optional): The url of an article whose content is wanted.
+        :param article_id (optional): The id of an article in the Readability
+            system whose content is wanted.
+        """
+        pass
+
+    def get_confidence(self, url=None, article_id=None):
+        """Send a GET request to the `confidence` endpoint of the Parser API.
+
+        Note that either the `url` or `article_id` param must be passed.
+
+        :param url (optional): The url of an article whose content is wanted.
+        :param article_id (optional): The id of an article in the Readability
+            system whose content is wanted.
+        """
+        pass
