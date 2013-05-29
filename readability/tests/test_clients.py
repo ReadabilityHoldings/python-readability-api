@@ -8,7 +8,6 @@ from readability.tests.settings import \
         CONSUMER_KEY, CONSUMER_SECRET, PASSWORD, USERNAME
 
 
-
 class ReaderClientNoBookmarkTest(TestCase):
     """Tests for the Readability ReaderClient class that need no bookmarks.
 
@@ -85,7 +84,7 @@ class ReaderClientSingleBookmarkTest(TestCase):
         self.base_client = ReaderClient(CONSUMER_KEY, CONSUMER_SECRET,
             self.token_key, self.token_secret)
 
-        self.url = 'http://www.theatlantic.com/technology/archive/2013/01/the-never-before-told-story-of-the-worlds-first-computer-art-its-a-sexy-dame/267439/' 
+        self.url = 'http://www.theatlantic.com/technology/archive/2013/01/the-never-before-told-story-of-the-worlds-first-computer-art-its-a-sexy-dame/267439/'
         add_response = self.base_client.add_bookmark(self.url)
         self.assertEqual(add_response.status, 202)
 
@@ -112,7 +111,7 @@ class ReaderClientSingleBookmarkTest(TestCase):
         some_expected_keys = set(['article', 'user_id', 'favorite', 'id'])
         received_keys = set(bm_response.content.keys())
         self.assertTrue(some_expected_keys.issubset(received_keys))
-        
+
 
     def test_bookmark_tag_functionality(self):
         """Test adding, fetching and deleting tags on a bookmark.
@@ -222,7 +221,7 @@ class ReaderClientMultipleBookmarkTest(TestCase):
         self.assertEqual(bm_response.status, 200)
         self.assertEqual(
             len(bm_response.content['bookmarks']), len(self.all_urls))
-        
+
         # test favorite bookmarks
         bm_response = self.base_client.get_bookmarks(favorite=True)
         self.assertEqual(bm_response.status, 200)
@@ -230,7 +229,7 @@ class ReaderClientMultipleBookmarkTest(TestCase):
             len(bm_response.content['bookmarks']), len(self.favorite_urls))
         for bm in bm_response.content['bookmarks']:
             self.assertTrue(bm['article']['url'] in self.favorite_urls)
-            
+
         # test archive bookmarks
         bm_response = self.base_client.get_bookmarks(archive=True)
         self.assertEqual(bm_response.status, 200)
