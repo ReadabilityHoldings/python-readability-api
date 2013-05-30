@@ -51,10 +51,8 @@ class BaseClient(object):
         The above will also be ran through `json.loads`.
 
         :param response: Repsonse received from API
-        :type response: httplib2.Response
-
         :param content: Content received from API
-        :type content: string
+
         """
         response.raw_content = content
         try:
@@ -105,6 +103,8 @@ class ReaderClient(object):
     def delete(self, url):
         """Make a HTTP DELETE request ot the Readability API.
 
+        :param url: The url to which to send a DELETE request.
+
         """
         logger.debug('Making DELETE request to %s', url)
         return self._create_response(
@@ -112,6 +112,11 @@ class ReaderClient(object):
 
     def _generate_url(self, resource, query_params=None):
         """Generate a Readability URL to the given resource.
+
+        :param resource: the path to the resource that the request should
+            go to.
+        :param query_params (optional): a dict of query params that should
+            be added to the url.
 
         """
         if query_params:
@@ -124,7 +129,6 @@ class ReaderClient(object):
         """Get a single article represented by `article_id`.
 
         :param article_id: ID of the article to retrieve.
-        :type article_id: integer
 
         """
         url = self._generate_url('articles/{0}'.format(article_id))
@@ -136,49 +140,21 @@ class ReaderClient(object):
         Filters:
 
         :param archive: Filter Bookmarks returned by archived status.
-        :type archive: boolean
-
         :param favorite: Filter Bookmarks returned by favorite status.
-        :type archive: boolean
-
         :param domain: Filter Bookmarks returned by a domain.
-        :type archive: string
-
         :param added_since: Filter bookmarks by date added (since this date).
-        :type added_since: datetime or string in ISO format.
-
         :param added_until: Filter bookmarks by date added (until this date).
-        :type added_until: datetime or string in ISO format.
-
         :param opened_since: Filter bookmarks by date opened (since this date).
-        :type opened_since: datetime or string in ISO format.
-
         :param opened_until: Filter bookmarks by date opened (until this date).
-        :type opened_until: datetime or string in ISO format.
-
         :param archived_since: Filter bookmarks by date archived (since this date.)
-        :type archived_since: datetime or string in ISO format.
-
         :param archived_until: Filter bookmarks by date archived (until this date.)
-        :type archived_until: datetime or string in ISO format.
-
         :param updated_since: Filter bookmarks by date updated (since this date.)
-        :type updated_since: datetime or string in ISO format.
-
         :param updated_until: Filter bookmarks by date updated (until this date.)
-        :type updated_until: datetime or string in ISO format.
-
         :param page: What page of results to return. Default is 1.
-        :type page: integer
-
         :param per_page: How many results to return per page. Default is 20, max is 50.
-        :type page: integer
-
         :param only_deleted: Return only bookmarks that this user has deleted.
-        :type page: boolean
-
         :param tags: Comma separated string of tags to filter bookmarks.
-        :type tags: string
+
         """
         filter_dict = filter_args_to_dict(filters, ACCEPTED_BOOKMARK_FILTERS)
         url = self._generate_url('bookmarks', query_params=filter_dict)
@@ -190,7 +166,6 @@ class ReaderClient(object):
         The requested bookmark must belong to the current user.
 
         :param bookmark_id: ID of the bookmark to retrieve.
-        :type bookmark_id: integer
 
         """
         url = self._generate_url('bookmarks/{0}'.format(bookmark_id))
@@ -211,7 +186,6 @@ class ReaderClient(object):
         The requested bookmark must belong to the current user.
 
         :param bookmark_id: ID of the bookmark to delete.
-        :type bookmark_id: integer
 
         """
         url = self._generate_url('bookmarks/{0}'.format(bookmark_id))
@@ -223,7 +197,6 @@ class ReaderClient(object):
         The requested bookmark must belong to the current user.
 
         :param bookmark_id: ID of the bookmark to delete.
-        :type bookmark_id: integer
 
         """
         url = self._generate_url('bookmarks/{0}/tags'.format(bookmark_id))
@@ -235,10 +208,7 @@ class ReaderClient(object):
         The identified bookmark must belong to the current user.
 
         :param bookmark_id: ID of the bookmark to delete.
-        :type bookmark_id: integer
-
         :param tags: Comma separated tags to be applied.
-        :type tags: string
 
         """
         url = self._generate_url('bookmarks/{0}/tags'.format(bookmark_id))
@@ -251,7 +221,6 @@ class ReaderClient(object):
         The identified bookmark must belong to the current user.
 
         :param bookmark_id: ID of the bookmark to delete.
-        :type bookmark_id: integer
 
         """
         url = self._generate_url('bookmarks/{0}/tags/{1}'.format(
@@ -264,7 +233,6 @@ class ReaderClient(object):
         The requested tag must belong to the current user.
 
         :param tag_id: ID fo the tag to retrieve.
-        :type tag_id: integer
 
         """
         url = self._generate_url('tags/{0}'.format(tag_id))
@@ -278,8 +246,8 @@ class ReaderClient(object):
         return self.get(url)
 
     def get_user(self):
-        """
-        Retrives the current user.
+        """Retrives the current user.
+
         """
         url = self._generate_url('users/_current')
         return self.get(url)
@@ -332,7 +300,7 @@ class ParserClient(BaseClient):
         """Make an HTTP POST request to the Parser API.
 
         :param url: url to which to make the request
-        :post_params: POST data to send along. Expected to be a dict.
+        :param post_params: POST data to send along. Expected to be a dict.
 
         """
         post_params['token'] = self.token
@@ -346,7 +314,6 @@ class ParserClient(BaseClient):
 
         :param resource: Name of the resource that is being called. Options are
         `''` (empty string) for root resource, `'parser'`, `'confidence'`.
-
         :param query_params: Data to be passed as query parameters.
 
         """
