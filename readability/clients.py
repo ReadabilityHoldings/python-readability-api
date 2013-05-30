@@ -13,13 +13,14 @@ import logging
 import urllib
 
 import oauth2
+import httplib2
 
 from .utils import filter_args_to_dict
 
 
 logger = logging.getLogger(__name__)
 DEFAULT_READER_URL_TEMPLATE = 'https://readability.com/api/rest/v1/{0}'
-DEFAULT_PARSER_URL_TEMPLATE = 'https://readability.com/api/content/v1/parser{0}'
+DEFAULT_PARSER_URL_TEMPLATE = 'https://readability.com/api/content/v1/{0}'
 ACCEPTED_BOOKMARK_FILTERS = ['archive', 'favorite', 'domain', 'added_since'
     'added_until', 'opened_since', 'opened_until', 'archived_since'
     'archived_until', 'updated_since', 'updated_until', 'page', 'per_page',
@@ -32,15 +33,14 @@ class BaseClient(object):
     """
 
     def _create_response(self, response, content):
-        """
-        Modify the httplib2.Repsonse object to return.
+        """Modify the httplib2.Repsonse object to return.
 
         Add two attributes to it:
 
         1) `raw_content` - this is the untouched content returned from the
         server.
 
-        2) `content` - this is a serialized response using json.loads.
+        2) `content` - this is a serialized response using `json.loads`.
 
         If the response was an error of any kind, the reponse content
         will be:
@@ -48,7 +48,7 @@ class BaseClient(object):
         ::
             {'error_message': <message from server>}
 
-        The above will also be ran through json.loads.
+        The above will also be ran through `json.loads`.
 
         :param response: Repsonse received from API
         :type response: httplib2.Response
@@ -86,16 +86,16 @@ class ReaderClient(object):
         self.oauth_client = oauth2.Client(self.consumer, self.token)
 
     def get(self, url):
-        """
-        Make a HTTP GET request to the Readability API.
+        """Make a HTTP GET request to the Reader API.
+
         """
         logger.debug('Making GET request to %s', url)
         return self._create_response(
             *self.oauth_client.request(url, method='GET'))
 
     def post(self, url, post_params=None):
-        """
-        Make a HTTP POST request ot the Readability API.
+        """Make a HTTP POST request ot the Reader API.
+
         """
         params = urllib.urlencode(post_params)
         logger.debug('Making POST request to %s with body %s', url, params)
@@ -103,16 +103,16 @@ class ReaderClient(object):
             *self.oauth_client.request(url, method='POST', body=params))
 
     def delete(self, url):
-        """
-        Make a HTTP DELETE request ot the Readability API.
+        """Make a HTTP DELETE request ot the Readability API.
+
         """
         logger.debug('Making DELETE request to %s', url)
         return self._create_response(
             *self.oauth_client.request(url, method='DELETE'))
 
     def _generate_url(self, resource, query_params=None):
-        """
-        Generate a Readability URL to the given resource.
+        """Generate a Readability URL to the given resource.
+
         """
         if query_params:
             resource = '{0}?{1}'.format(
@@ -131,8 +131,7 @@ class ReaderClient(object):
         return self.get(url)
 
     def get_bookmarks(self, **filters):
-        """
-        Get Bookmarks for the current user.
+        """Get Bookmarks for the current user.
 
         Filters:
 
@@ -198,7 +197,9 @@ class ReaderClient(object):
         return self.get(url)
 
     def add_bookmark(self, url, favorite=False, archive=False):
-        """Adds given bookmark."""
+        """Adds given bookmark.
+
+        """
 
         rdb_url = self._generate_url('bookmarks')
         params = dict(url=url, favorite=int(favorite), archive=int(archive))
@@ -300,14 +301,74 @@ class ParserClient(BaseClient):
         main purpose for it is testing environments that the user probably
         doesn't have access to (staging, local dev, etc).
         """
+        logger.debug('Initializing ParserClient with base url template %s',
+            base_url_template)
+
         self.token = token
+        self.base_url_template = base_url_template
+
+
+    def get(self, url):
+        """Make an HTTP GET request to the Parser API.
+
+        :param url: url to which to make the request
+
+        """
+        logger.debug('Making GET request to %s', url)
+        http = httplib2.Http()
+        return self._create_response(*http.request(url, 'GET'))
+
+    def head(self, url):
+        """Make an HTTP HEAD request to the Parser API.
+
+        :param url: url to which to make the request
+
+        """
+        pass
+
+    def post(self, url, post_params=None):
+        """Make an HTTP POST request to the Parser API.
+
+        :param url: url to which to make the request
+        :post_params: POST data to send along. Expected to be a dict.
+
+        """
+        params = urllib.urlencode(post_params)
+        logger.debug('Making POST request to %s with body %s', url, params)
+        http = httplib2.Http()
+        return self._create_response(*http.request(url, 'POST', body=params))
+
+    def _generate_url(self, resource, query_params=None):
+        """Build the url to resource.
+
+        :param resource: Name of the resource that is being called. Options are
+        `''` (empty string) for root resource, `'parser'`, `'confidence'`.
+
+        :param query_params: Data to be passed as query parameters.
+
+        """
+        if query_params:
+            # extra & is for the token to be added
+            resource = '{0}?{1}&'.format(
+                resource, urllib.urlencode(query_params))
+        else:
+            # if we don't have query parameters, setup the url with the
+            # resource name and question mark so that we can add the token
+            # easier
+            resource = '{0}?'.format(resource)
+
+        # add token
+        resource = '{0}token={1}'.format(resource, self.token)
+
+        # apply base url template and return
+        return self.base_url_template.format(resource)
 
     def get_root(self):
         """Send a GET request to the root resource of the Parser API.
 
         """
-        pass
-
+        url = self._generate_url('')
+        return self.get(url)
 
     def get_article_content(self, url=None, article_id=None, max_pages=25):
         """Send a GET request to the `parser` endpoint of the parser API to get
@@ -348,4 +409,10 @@ class ParserClient(BaseClient):
         :param article_id (optional): The id of an article in the Readability
             system whose content is wanted.
         """
-        pass
+        query_params = {}
+        if url is not None:
+            query_params['url'] = url
+        if article_id is not None:
+            query_params['article_id'] = article_id
+        url = self._generate_url('confidence', query_params=query_params)
+        return self.get(url)

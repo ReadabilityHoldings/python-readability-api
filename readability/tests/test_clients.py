@@ -2,10 +2,10 @@
 
 from unittest import TestCase
 
-from readability import xauth
-from readability.clients import ReaderClient
+from readability import xauth, ParserClient, ReaderClient
+from readability.clients import DEFAULT_PARSER_URL_TEMPLATE
 from readability.tests.settings import \
-        CONSUMER_KEY, CONSUMER_SECRET, PASSWORD, USERNAME
+        CONSUMER_KEY, CONSUMER_SECRET, PARSER_TOKEN, PASSWORD, USERNAME
 
 
 class ReaderClientNoBookmarkTest(TestCase):
@@ -245,3 +245,58 @@ class ReaderClientMultipleBookmarkTest(TestCase):
         for bm in self.base_client.get_bookmarks().content['bookmarks']:
             del_response = self.base_client.delete_bookmark(bm['id'])
             self.assertEqual(del_response.status, 204)
+
+
+class ParserClientTest(TestCase):
+    """Test case for the Parser Client
+
+    """
+
+    def setUp(self):
+        self.parser_client = ParserClient(PARSER_TOKEN)
+
+    def test_generate_url(self):
+        """Test the clients ability to generate urls to endpoints.
+
+        """
+        # test root resource
+        expected_url = DEFAULT_PARSER_URL_TEMPLATE.format('')
+        expected_url = '{0}?token={1}'.format(expected_url, PARSER_TOKEN)
+        generated_url = self.parser_client._generate_url('')
+        self.assertEqual(generated_url, expected_url)
+
+        expected_url = DEFAULT_PARSER_URL_TEMPLATE.format('parser')
+        params = {'url': 'http://www.beanis.biz/blog.html'}
+        expected_url = '{0}?url=http%3A%2F%2Fwww.beanis.biz%2Fblog.html&token={1}'.format(
+            expected_url, PARSER_TOKEN)
+
+        generated_url = self.parser_client._generate_url(
+            'parser', query_params=params)
+        self.assertEqual(generated_url, expected_url)
+
+    def test_get_root(self):
+        """Test the client's ability to hit the root endpoint.
+
+        """
+        response = self.parser_client.get_root()
+
+        expected_keys = set(['resources', ])
+        self.assertEqual(set(response.content.keys()), expected_keys)
+
+
+    def test_get_confidence(self):
+        """Test the client's ability to hit the confidence endpoint.
+
+        """
+        # hit without an article_id or url. Should get an error.
+        response = self.parser_client.get_confidence()
+        self.assertEqual(response.status, 400)
+
+        expected_keys = set(['url', 'confidence'])
+
+        url = 'https://en.wikipedia.org/wiki/Mark_Twain'
+        response = self.parser_client.get_confidence(url=url)
+        self.assertEqual(response.status, 200)
+        self.assertEqual(set(response.content.keys()), expected_keys)
+        # confidence for wikipedia should be over .5
+        self.assertTrue(response.content['confidence'] > .5)

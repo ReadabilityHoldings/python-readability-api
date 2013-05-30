@@ -1,2 +1,2 @@
-from .clients import ReaderClient
+from .clients import ParserClient, ReaderClient
 from .auth import xauth
