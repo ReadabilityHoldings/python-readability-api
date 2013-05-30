@@ -84,9 +84,9 @@ class ReaderClient(object):
         :param token_key: Readability user token key
         :param token_secret: Readability user token secret
         :param base_url_template (optional): Template used to build URL to
-        which requests will be sent. This shouldn't need to be passed as the
-        main purpose for it is testing environments that the user probably
-        doesn't have access to (staging, local dev, etc).
+            which requests will be sent. This shouldn't need to be passed as the
+            main purpose for it is testing environments that the user probably
+            doesn't have access to (staging, local dev, etc).
 
         """
 
@@ -282,9 +282,9 @@ class ParserClient(BaseClient):
 
         :param token: parser API token.
         :param base_url_template (optional): Template used to build URL to
-        which requests will be sent. This shouldn't need to be passed as the
-        main purpose for it is testing environments that the user probably
-        doesn't have access to (staging, local dev, etc).
+            which requests will be sent. This shouldn't need to be passed as the
+            main purpose for it is testing environments that the user probably
+            doesn't have access to (staging, local dev, etc).
         """
         logger.debug('Initializing ParserClient with base url template %s',
             base_url_template)
