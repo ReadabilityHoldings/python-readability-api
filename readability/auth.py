@@ -26,19 +26,10 @@ def xauth(consumer_key, consumer_secret, username, password,
     Returns an OAuth token that can be used with clients.ReaderClient.
 
     :param consumer_key: Your Readability consumer key
-    :type consumer_key: string
-
     :param consumer_secret: Your Readability consumer secret
-    :type consumer_key: string
-
     :param username: A username
-    :type username: string
-
     :param password: A password
-    :type username: string
-
     :param base_url_template: Template for generating Readability API urls.
-    :type base_url_template: string
 
     """
     # fetch oauth token from server
