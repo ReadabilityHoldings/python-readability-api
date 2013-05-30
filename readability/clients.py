@@ -77,6 +77,18 @@ class ReaderClient(object):
 
     def __init__(self, consumer_key, consumer_secret, token_key, token_secret,
         base_url_template=DEFAULT_READER_URL_TEMPLATE):
+        """Initialize the ReadeClient.
+
+        :param consumer_key: Reader API key
+        :param consumer_secret: Reader API secret
+        :param token_key: Readability user token key
+        :param token_secret: Readability user token secret
+        :param base_url_template (optional): Template used to build URL to
+        which requests will be sent. This shouldn't need to be passed as the
+        main purpose for it is testing environments that the user probably
+        doesn't have access to (staging, local dev, etc).
+
+        """
 
         self.base_url_template = base_url_template
         self.token = oauth2.Token(token_key, token_secret)
@@ -86,6 +98,8 @@ class ReaderClient(object):
     def get(self, url):
         """Make a HTTP GET request to the Reader API.
 
+        :param url: url to which to make a GET request.
+
         """
         logger.debug('Making GET request to %s', url)
         return self._create_response(
@@ -93,6 +107,9 @@ class ReaderClient(object):
 
     def post(self, url, post_params=None):
         """Make a HTTP POST request ot the Reader API.
+
+        :param url: url to which to make a POST request.
+        :param post_params: parameters to be sent in the request's body.
 
         """
         params = urllib.urlencode(post_params)

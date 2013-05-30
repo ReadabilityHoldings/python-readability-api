@@ -22,11 +22,10 @@ ACCESS_TOKEN_URL = 'oauth/access_token/'
 
 def xauth(consumer_key, consumer_secret, username, password,
     base_url_template=DEFAULT_BASE_URL_TEMPLATE):
-    """
-    Returns an OAuth token that can be used with clients.ReaderClient.
+    """Returns an OAuth token that can be used with clients.ReaderClient.
 
-    :param consumer_key: Your Readability consumer key
-    :param consumer_secret: Your Readability consumer secret
+    :param consumer_key:  Readability consumer key
+    :param consumer_secret: Readability consumer secret
     :param username: A username
     :param password: A password
     :param base_url_template: Template for generating Readability API urls.
