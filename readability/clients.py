@@ -324,7 +324,9 @@ class ParserClient(BaseClient):
         :param url: url to which to make the request
 
         """
-        pass
+        logger.debug('Making HEAD request to %s', url)
+        http = httplib2.Http()
+        return self._create_response(*http.request(url, 'HEAD'))
 
     def post(self, url, post_params=None):
         """Make an HTTP POST request to the Parser API.
@@ -377,7 +379,7 @@ class ParserClient(BaseClient):
         The article can be identified by either a URL or an id that exists
         in Readability.
 
-        Note that either the `url` or `article_id` param must be passed.
+        Note that either the `url` or `article_id` param should be passed.
 
         :param url (optional): The url of an article whose content is wanted.
         :param article_id (optional): The id of an article in the Readability
@@ -387,23 +389,32 @@ class ParserClient(BaseClient):
         """
         pass
 
-
     def get_article_status(self, url=None, article_id=None):
         """Send a HEAD request to the `parser` endpoint to the parser API to
         get the articles status.
 
-        Note that either the `url` or `article_id` param must be passed.
+        Returned is a `httplib2.Response` object. The id and status for the
+        article can be extracted from the `X-Article-Id` and `X-Article-Status`
+        headers.
+
+        Note that either the `url` or `article_id` param should be passed.
 
         :param url (optional): The url of an article whose content is wanted.
         :param article_id (optional): The id of an article in the Readability
             system whose content is wanted.
         """
-        pass
+        query_params = {}
+        if url is not None:
+            query_params['url'] = url
+        if article_id is not None:
+            query_params['article_id'] = article_id
+        url = self._generate_url('parser', query_params=query_params)
+        return self.head(url)
 
     def get_confidence(self, url=None, article_id=None):
         """Send a GET request to the `confidence` endpoint of the Parser API.
 
-        Note that either the `url` or `article_id` param must be passed.
+        Note that either the `url` or `article_id` param should be passed.
 
         :param url (optional): The url of an article whose content is wanted.
         :param article_id (optional): The id of an article in the Readability

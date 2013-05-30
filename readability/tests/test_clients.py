@@ -283,7 +283,6 @@ class ParserClientTest(TestCase):
         expected_keys = set(['resources', ])
         self.assertEqual(set(response.content.keys()), expected_keys)
 
-
     def test_get_confidence(self):
         """Test the client's ability to hit the confidence endpoint.
 
@@ -300,3 +299,18 @@ class ParserClientTest(TestCase):
         self.assertEqual(set(response.content.keys()), expected_keys)
         # confidence for wikipedia should be over .5
         self.assertTrue(response.content['confidence'] > .5)
+
+    def test_get_article_status(self):
+        """Test the client's ability to hit the parser endpoint with a head
+        request.
+
+        """
+        # hit without an article_id or url. Should get an error.
+        response = self.parser_client.get_confidence()
+        self.assertEqual(response.status, 400)
+
+        url = 'https://en.wikipedia.org/wiki/Mark_Twain'
+        response = self.parser_client.get_article_status(url=url)
+        self.assertEqual(response.status, 200)
+        self.assertTrue(response.get('x-article-status') is not None)
+        self.assertTrue(response.get('x-article-id') is not None)
