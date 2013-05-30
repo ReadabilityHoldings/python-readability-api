@@ -254,6 +254,7 @@ class ParserClientTest(TestCase):
 
     def setUp(self):
         self.parser_client = ParserClient(PARSER_TOKEN)
+        self.test_url = 'https://en.wikipedia.org/wiki/Mark_Twain'
 
     def test_generate_url(self):
         """Test the clients ability to generate urls to endpoints.
@@ -293,8 +294,7 @@ class ParserClientTest(TestCase):
 
         expected_keys = set(['url', 'confidence'])
 
-        url = 'https://en.wikipedia.org/wiki/Mark_Twain'
-        response = self.parser_client.get_confidence(url=url)
+        response = self.parser_client.get_confidence(url=self.test_url)
         self.assertEqual(response.status, 200)
         self.assertEqual(set(response.content.keys()), expected_keys)
         # confidence for wikipedia should be over .5
@@ -309,8 +309,7 @@ class ParserClientTest(TestCase):
         response = self.parser_client.get_confidence()
         self.assertEqual(response.status, 400)
 
-        url = 'https://en.wikipedia.org/wiki/Mark_Twain'
-        response = self.parser_client.get_article_status(url=url)
+        response = self.parser_client.get_article_status(url=self.test_url)
         self.assertEqual(response.status, 200)
         self.assertTrue(response.get('x-article-status') is not None)
         self.assertTrue(response.get('x-article-id') is not None)
