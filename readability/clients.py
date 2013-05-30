@@ -335,6 +335,7 @@ class ParserClient(BaseClient):
         :post_params: POST data to send along. Expected to be a dict.
 
         """
+        post_params['token'] = self.token
         params = urllib.urlencode(post_params)
         logger.debug('Making POST request to %s with body %s', url, params)
         http = httplib2.Http()
@@ -387,7 +388,33 @@ class ParserClient(BaseClient):
         :param max_pages: The maximum number of pages to parse and combine.
             The default is 25.
         """
-        pass
+        query_params = {}
+        if url is not None:
+            query_params['url'] = url
+        if article_id is not None:
+            query_params['article_id'] = article_id
+        query_params['max_pages'] = max_pages
+        url = self._generate_url('parser', query_params=query_params)
+        return self.get(url)
+
+    def post_article_content(self, content, url, max_pages=25):
+        """POST content to be parsed to the Parser API.
+
+        Note: Even when POSTing content, a url must still be provided.
+
+        :param content: the content to be parsed
+        :param url: the url that represents the content
+        :param max_pages (optional): the maximum number of pages to parse
+            and combine. Default is 25.
+
+        """
+        params = {
+            'content': content,
+            'url': url,
+            'max_pages': max_pages
+        }
+        url = self._generate_url('parser')
+        return self.post(url, post_params=params)
 
     def get_article_status(self, url=None, article_id=None):
         """Send a HEAD request to the `parser` endpoint to the parser API to
