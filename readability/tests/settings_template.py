@@ -3,3 +3,5 @@ CONSUMER_SECRET = ''
 
 USERNAME = ''
 PASSWORD = ''
+
+PARSER_TOKEN = ''

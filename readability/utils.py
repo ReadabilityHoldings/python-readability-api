@@ -18,6 +18,8 @@ from dateutil.parser import parse as parse_datetime
 logger = logging.getLogger(__name__)
 
 
+# map of filter names to a data type. This is used to map names to a
+# casting function when needed.
 filter_type_map = {
     'added_since': 'datetime',
     'added_until': 'datetime',
@@ -44,6 +46,9 @@ filter_type_map = {
 def cast_datetime_filter(value):
     """Cast a datetime filter value.
 
+    :param value: string representation of a value that needs to be casted to
+        a `datetime` object.
+
     """
     if isinstance(value, basestring):
         dtime = parse_datetime(value)
@@ -61,6 +66,8 @@ def cast_integer_filter(value):
 
     Theses are usually booleans in Python but they need to be sent as
     1s and 0s to the API.
+
+    :param value: boolean value that needs to be casted to an int
     """
     return int(value)
 
@@ -69,10 +76,7 @@ def filter_args_to_dict(filter_dict, accepted_filter_keys=[]):
     """Cast and validate filter args.
 
     :param filter_dict: Filter kwargs
-    :type filter_dict: dict
-
     :param accepted_filter_keys: List of keys that are acceptable to use.
-    :type accepted_filter_keys: list of strings
 
     """
     out_dict = {}
