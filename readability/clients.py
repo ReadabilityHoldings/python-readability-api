@@ -68,7 +68,7 @@ class BaseClient(object):
         return response
 
 
-class ReaderClient(object):
+class ReaderClient(BaseClient):
     """Client for interacting with the Readability Reader API.
 
     Docs can be found at `http://www.readability.com/developers/api/reader`.
