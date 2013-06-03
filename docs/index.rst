@@ -69,11 +69,3 @@ token, getting the parsed output for an article is easy.
 
 See :class:`readability.ParserClient` docs for a complete list of
 available functionality.
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
