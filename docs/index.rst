@@ -22,7 +22,7 @@ The Readability package is hosted on `Github <https://github.com/arc90/python-re
 can easily be installed using `pip <http://www.pip-installer.org/>`_.
 
 
-    $ pip install -e git+git@github.com:arc90/python-readability-api.git@v0.2#egg=readability
+    $ pip install -e git+git@github.com:arc90/python-readability-api.git@v0.2.0#egg=readability
 
 
 Reader API Client
