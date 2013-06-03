@@ -1,83 +1,8 @@
 python-readability
 ==================
 
-This module provides a reference implementation for consuming the
-Readability API.
-
-
-You can use it to:
-
-- Add/Remove Bookmarks
-- List Articles
-- Add/Remove Tags to Bookmarks
-
-
-Version 0.2.0 Highlights
-------------------------
-
-- No more 2.5 support. Sorry.
-- No more models. Deal with the JSON that comes back from the server.
-
-
-Version 0.2.0 Soon to Haves
----------------------------
-
-- Python 3 support (hopefully)
-
-
-Usage
------
-
-
-Get user info::
-
-    >>> response = rdd.get_user()
-    <HTTPResponse object >
-    >>> reponse.content
-    {
-        'username': <username>,
-        'first_name': <first_name>,
-        'last_name': <last_name>,
-        'avatar_url': <avatar_url>,
-        'date_joined': <date
-        
-
-List a user's bookmarks::
-
-    >>> rdd.get_bookmarks()
-    [<bookmark "1">, <bookmark "3">, <bookmark "5">, <bookmark "7">]
-
-    >>> for b in rdd.get_bookmarks()
-    ...     print b.article.url
-
-
-List a user's favorites::
-
-    >>> rdd.get_bookmarks(favorite=True)
-    [<bookmark "3">]
-
-
-Save the OAuth Token for later::
-
-    >>> rdd.token_tuple
-    ('oauth-token', 'oauth-secret')
-
-
-
-Install
--------
-
-Installing python-readability is easy::
-
-    $ pip install readability-api
-
-Or, if you must::
-
-    $ easy_install readability-api
-
-But, you `really shouldn't do that
-<http://www.pip-installer.org/en/latest/index.html#pip-compared-to-easy-install>`_.
-
+Check the `docs <https://readability-python-library.readthedocs.org/en/latest/>`_
+for installation instructions and examples.
 
 
 License
