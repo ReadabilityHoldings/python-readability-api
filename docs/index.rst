@@ -6,11 +6,63 @@
 Welcome to Readability API Python Library's documentation!
 ==========================================================
 
+Release v\ |version|.
+
 Contents:
 
 .. toctree::
    :maxdepth: 2
 
+
+Installation
+------------
+
+The Readability package is hosted on `Github <https://github.com/arc90/python-readability-api>`_ and
+can easily be installed using `pip <http://www.pip-installer.org/>`_.
+
+
+    $ pip install readability
+
+
+Reader API Client
+-----------------
+
+The `Reader API <http://readability.com/developers/api/reader>`_ client
+requires four pieces of credential data. A consumer key and consumer
+secret can be obtained from the
+`Readability account page <http://www.readability.com/account/api>`_. In
+addition to consumer creds, a user's key and secret must also be used for
+authentication.
+
+Getting a user's favorite bookmarks is easy.
+
+::
+
+    from readability import ReaderClient
+    rdb_client = ReaderClient('consumer_token', 'consumer_secret', 'user_key', 'user_secret')
+    bookmarks_response = rdb_client.get_bookmarks(favorite=True)
+    print bookmarks_response.content
+
+    >>> {'bookmarks': [{'user_id': 9999, 'read_percent': u'0.00', ... }
+
+
+
+Parser API Client
+-----------------
+
+Authentication with the `Parser API <http://readability.com/developers/api/parser>`_
+is simpler than the Reader API. All that's needed is a single token that can
+be obtained from the
+`Readability account page <http://www.readability.com/account/api>`_. With a
+token, getting the parsed output for an article is easy.
+
+::
+
+   from readability import ParserClient
+   parser_client = ParserClient('your_parser_token')
+   parser_response = parser_client.get_article_content('http://www.some-web-page/blog.html')
+   print parser_response.content['content']
+   >>> {"content" <div class=\"article-text\">\n<p>I'm idling outside Diamante's, [snip] ...</p></div>", ... }
 
 
 Indices and tables
@@ -19,4 +71,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
