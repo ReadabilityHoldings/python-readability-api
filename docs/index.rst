@@ -8,10 +8,11 @@ Welcome to Readability API Python Library's documentation!
 
 Release v\ |version|.
 
-Contents:
 
 .. toctree::
    :maxdepth: 2
+
+   clients
 
 
 Installation
@@ -21,7 +22,7 @@ The Readability package is hosted on `Github <https://github.com/arc90/python-re
 can easily be installed using `pip <http://www.pip-installer.org/>`_.
 
 
-    $ pip install readability
+    $ pip install -e git+git@github.com:arc90/python-readability-api.git@v0.2#egg=readability
 
 
 Reader API Client
@@ -45,6 +46,8 @@ Getting a user's favorite bookmarks is easy.
 
     >>> {'bookmarks': [{'user_id': 9999, 'read_percent': u'0.00', ... }
 
+See :class:`readability.ReaderClient` docs for a complete list of
+available functionality.
 
 
 Parser API Client
@@ -63,6 +66,9 @@ token, getting the parsed output for an article is easy.
    parser_response = parser_client.get_article_content('http://www.some-web-page/blog.html')
    print parser_response.content['content']
    >>> {"content" <div class=\"article-text\">\n<p>I'm idling outside Diamante's, [snip] ...</p></div>", ... }
+
+See :class:`readability.ParserClient` docs for a complete list of
+available functionality.
 
 
 Indices and tables
