@@ -18,7 +18,7 @@ required = ['oauth2', 'httplib2<=0.6.0', 'python-dateutil']
 
 setup(
     name='readability-api',
-    version='0.2.0',
+    version='0.2.1',
     description='Python wrapper for the Readability API.',
     long_description=open('README.rst').read(),
     author='The Readability Team',
