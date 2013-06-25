@@ -393,7 +393,7 @@ class ParserClient(BaseClient):
 
         """
         params = {
-            'content': content,
+            'doc': content,
             'url': url,
             'max_pages': max_pages
         }
