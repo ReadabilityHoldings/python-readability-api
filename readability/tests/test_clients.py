@@ -298,7 +298,7 @@ class ParserClientTest(TestCase):
         self.assertEqual(response.status, 200)
         self.assertEqual(set(response.content.keys()), expected_keys)
         # confidence for wikipedia should be over .5
-        self.assertTrue(response.content['confidence'] > .5)
+        self.assertTrue(response.content['confidence'] >= .5)
 
     def test_get_article_status(self):
         """Test the client's ability to hit the parser endpoint with a HEAD
