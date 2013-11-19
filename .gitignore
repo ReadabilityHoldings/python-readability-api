@@ -2,3 +2,5 @@
 readability/tests/settings.py
 *.egg-info
 docs/_build/*
+build/
+dist/
