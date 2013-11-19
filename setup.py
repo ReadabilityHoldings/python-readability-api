@@ -14,7 +14,7 @@ if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist upload')
     sys.exit()
 
-required = ['oauth2', 'httplib2<=0.6.0', 'python-dateutil']
+required = ['oauth2', 'httplib2==0.8.0', 'python-dateutil']
 
 setup(
     name='readability-api',
