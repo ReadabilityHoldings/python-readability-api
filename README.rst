@@ -1,5 +1,5 @@
-.. image:: https://badge.fury.io/py/readability.png
-    :target: http://badge.fury.io/py/readability
+.. image:: https://badge.fury.io/py/readability-api.png
+    :target: http://badge.fury.io/py/readability-api
 
 python-readability
 ==================
