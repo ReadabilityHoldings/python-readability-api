@@ -1,3 +1,6 @@
+.. image:: https://badge.fury.io/py/readability.png
+    :target: http://badge.fury.io/py/readability
+
 python-readability
 ==================
 
