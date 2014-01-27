@@ -28,10 +28,10 @@ can easily be installed using `pip <http://www.pip-installer.org/>`_.
 Reader API Client
 -----------------
 
-The `Reader API <http://readability.com/developers/api/reader>`_ client
+The `Reader API <https://www.readability.com/developers/api/reader>`_ client
 requires four pieces of credential data. A consumer key and consumer
 secret can be obtained from the
-`Readability account page <https://readability.com/settings/account>`_. In
+`Readability account page <https://www.readability.com/settings/account>`_. In
 addition to consumer creds, a user's key and secret must also be used for
 authentication.
 
