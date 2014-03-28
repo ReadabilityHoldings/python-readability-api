@@ -106,7 +106,7 @@ class ReaderClient(BaseClient):
             *self.oauth_client.request(url, method='GET'))
 
     def post(self, url, post_params=None):
-        """Make a HTTP POST request ot the Reader API.
+        """Make a HTTP POST request to the Reader API.
 
         :param url: url to which to make a POST request.
         :param post_params: parameters to be sent in the request's body.
@@ -118,7 +118,7 @@ class ReaderClient(BaseClient):
             *self.oauth_client.request(url, method='POST', body=params))
 
     def delete(self, url):
-        """Make a HTTP DELETE request ot the Readability API.
+        """Make a HTTP DELETE request to the Readability API.
 
         :param url: The url to which to send a DELETE request.
 
