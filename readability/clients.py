@@ -197,6 +197,31 @@ class ReaderClient(BaseClient):
         params = dict(url=url, favorite=int(favorite), archive=int(archive))
         return self.post(rdb_url, params)
 
+    def update_bookmark(self, bookmark_id, favorite=None, archive=None, read_percent=None):
+        """Updates given bookmark.
+
+        """
+
+        rdb_url = self._generate_url('bookmarks/{0}'.format(bookmark_id))
+        params = {}
+        if favorite is not None:
+            params['favorite'] = 1 if favorite == True else 0
+        if archive is not None:
+            params['archive'] = 1 if archive == True else 0
+        if read_percent is not None:
+            try:
+                params['read_percent'] = float(read_percent)
+            except ValueError:
+                pass
+        return self.post(rdb_url, params)
+
+    def archive_bookmark(self, bookmark_id):
+        """Archives given bookmark.
+
+        """
+
+        return self.update_bookmark(bookmark_id, archive=True)
+
     def delete_bookmark(self, bookmark_id):
         """Delete a single bookmark represented by `bookmark_id`.
 
