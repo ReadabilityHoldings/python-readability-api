@@ -197,6 +197,67 @@ class ReaderClient(BaseClient):
         params = dict(url=url, favorite=int(favorite), archive=int(archive))
         return self.post(rdb_url, params)
 
+    def update_bookmark(self, bookmark_id, favorite=None, archive=None, read_percent=None):
+        """Updates given bookmark.
+
+        The requested bookmark must belong to the current user.
+
+        :param bookmark_id: ID of the bookmark to update.
+        :param favorite (optional): Whether this article is favorited or not.
+        :param archive (optional): Whether this article is archived or not.
+        :param read_percent (optional): The read progress made in this article,
+          where 1.0 means the bottom and 0.0 means the very top.
+
+        """
+
+        rdb_url = self._generate_url('bookmarks/{0}'.format(bookmark_id))
+        params = {}
+        if favorite is not None:
+            params['favorite'] = 1 if favorite == True else 0
+        if archive is not None:
+            params['archive'] = 1 if archive == True else 0
+        if read_percent is not None:
+            try:
+                params['read_percent'] = float(read_percent)
+            except ValueError:
+                pass
+        return self.post(rdb_url, params)
+
+    def favorite_bookmark(self, bookmark_id):
+        """Favorites given bookmark.
+
+        The requested bookmark must belong to the current user.
+
+        :param bookmark_id: ID of the bookmark to favorite.
+
+        """
+
+        return self.update_bookmark(bookmark_id, favorite=True)
+
+    def archive_bookmark(self, bookmark_id):
+        """Archives given bookmark.
+
+        The requested bookmark must belong to the current user.
+
+        :param bookmark_id: ID of the bookmark to archive.
+
+        """
+
+        return self.update_bookmark(bookmark_id, archive=True)
+
+    def set_read_percent_of_bookmark(self, bookmark_id, read_percent):
+        """Set read progress of given bookmark.
+
+        The requested bookmark must belong to the current user.
+
+        :param bookmark_id: ID of the bookmark to update.
+        :param read_percent: The read progress made in this article,
+          where 1.0 means the bottom and 0.0 means the very top.
+
+        """
+
+        return self.update_bookmark(bookmark_id, read_percent=read_percent)
+
     def delete_bookmark(self, bookmark_id):
         """Delete a single bookmark represented by `bookmark_id`.
 
