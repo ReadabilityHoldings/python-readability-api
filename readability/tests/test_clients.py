@@ -9,26 +9,26 @@ from readability.tests.settings import \
 
 
 class ReaderClientNoBookmarkTest(TestCase):
-    """Tests for the Readability ReaderClient class that need no bookmarks.
-
+    """
+    Tests for the Readability ReaderClient class that need no bookmarks.
     """
     def setUp(self):
-        """Need to get a token for each test.
-
+        """
+        Need to get a token for each test.
         """
         token_pair = xauth(CONSUMER_KEY, CONSUMER_SECRET, USERNAME, PASSWORD)
         self.token_key = token_pair[0]
         self.token_secret = token_pair[1]
 
-        self.base_client = ReaderClient(CONSUMER_KEY, CONSUMER_SECRET,
+        self.reader_client = ReaderClient(CONSUMER_KEY, CONSUMER_SECRET,
             self.token_key, self.token_secret)
 
     def test_get_article(self):
-        """Test the `get_article` method.
-
+        """
+        Test the `get_article` method.
         """
         article_id = 'lun3elns'
-        response = self.base_client.get_article(article_id)
+        response = self.reader_client.get_article(article_id)
         self.assertEqual(response.status, 200)
         self.assertTrue(isinstance(response.content, dict))
 
@@ -39,20 +39,20 @@ class ReaderClientNoBookmarkTest(TestCase):
         self.assertTrue(some_expected_keys.issubset(keys_set))
 
     def test_get_article_404(self):
-        """Try getting an article that doesn't exist.
-
+        """
+        Try getting an article that doesn't exist.
         """
         article_id = 1
-        response = self.base_client.get_article(article_id)
+        response = self.reader_client.get_article(article_id)
         self.assertEqual(response.status, 404)
         self.assertTrue(isinstance(response.content, dict))
         self.assertTrue('error_message' in response.content)
 
     def test_get_user(self):
-        """Test getting user data
-
         """
-        user_response = self.base_client.get_user()
+        Test getting user data
+        """
+        user_response = self.reader_client.get_user()
         self.assertEqual(user_response.status, 200)
         some_expected_keys = set(['username', 'first_name', 'last_name',
             'date_joined', 'email_into_address'])
@@ -60,71 +60,70 @@ class ReaderClientNoBookmarkTest(TestCase):
         self.assertTrue(some_expected_keys.issubset(received_keys))
 
     def _test_get_tags(self):
-        """Test getting tags.
-
         """
-        tag_response = self.base_client.get_tags()
+        Test getting tags.
+        """
+        tag_response = self.reader_client.get_tags()
         self.assertEqual(tag_response.status, 200)
         self.assertTrue('tags' in tag_response.content)
         self.assertTrue(len(tag_response.content['tags']) > 0)
 
 
 class ReaderClientSingleBookmarkTest(TestCase):
-    """Tests that only need one bookmark
-
+    """
+    Tests that only need one bookmark
     """
     def setUp(self):
-        """Get a client and add a bookmark
-
+        """
+        Get a client and add a bookmark
         """
         token_pair = xauth(CONSUMER_KEY, CONSUMER_SECRET, USERNAME, PASSWORD)
         self.token_key = token_pair[0]
         self.token_secret = token_pair[1]
 
-        self.base_client = ReaderClient(CONSUMER_KEY, CONSUMER_SECRET,
+        self.reader_client = ReaderClient(CONSUMER_KEY, CONSUMER_SECRET,
             self.token_key, self.token_secret)
 
         self.url = 'http://www.theatlantic.com/technology/archive/2013/01/the-never-before-told-story-of-the-worlds-first-computer-art-its-a-sexy-dame/267439/'
-        add_response = self.base_client.add_bookmark(self.url)
+        add_response = self.reader_client.add_bookmark(self.url)
         self.assertEqual(add_response.status, 202)
 
     def tearDown(self):
-        """Remove all added bookmarks.
-
         """
-        for bm in self.base_client.get_bookmarks().content['bookmarks']:
-            del_response = self.base_client.delete_bookmark(bm['id'])
+        Remove all added bookmarks.
+        """
+        for bm in self.reader_client.get_bookmarks().content['bookmarks']:
+            del_response = self.reader_client.delete_bookmark(bm['id'])
             self.assertEqual(del_response.status, 204)
 
     def test_get_bookmark(self):
-        """Test getting one bookmark by id
-
         """
-        # get a bookmark id
-        bm_response = self.base_client.get_bookmarks()
-        self.assertEqual(bm_response.status, 200)
-        self.assertTrue(len(bm_response.content['bookmarks']) > 0)
-        bookmark_id = bm_response.content['bookmarks'][0]['id']
+        Test getting one bookmark by id
+        """
+        bookmark_id = self._get_bookmark_data()['id']
 
-        bm_response = self.base_client.get_bookmark(bookmark_id)
+        bm_response = self.reader_client.get_bookmark(bookmark_id)
         self.assertEqual(bm_response.status, 200)
         some_expected_keys = set(['article', 'user_id', 'favorite', 'id'])
         received_keys = set(bm_response.content.keys())
         self.assertTrue(some_expected_keys.issubset(received_keys))
 
+    def test_archive_bookmark(self):
+        """
+        Test archiving a bookmark. The ``archive_bookmark`` method is just
+        a convenient wrapper around the ``update_bookmark`` method but
+        we'll go ahead and test it anyway.
+        """
+        bm_data = self._get_bookmark_data()
 
     def test_bookmark_tag_functionality(self):
-        """Test adding, fetching and deleting tags on a bookmark.
-
         """
-        # get a bookmark id
-        bm_response = self.base_client.get_bookmarks()
-        self.assertEqual(bm_response.status, 200)
-        self.assertTrue(len(bm_response.content['bookmarks']) > 0)
-        bookmark_id = bm_response.content['bookmarks'][0]['id']
+        Test adding, fetching and deleting tags on a bookmark.
+        """
+        bookmark_id = self._get_bookmark_data()['id']
 
         # test getting empty tags
-        tag_response = self.base_client.get_bookmark_tags(bookmark_id)
+        tag_response = self.reader_client.get_bookmark_tags(bookmark_id)
         self.assertEqual(tag_response.status, 200)
         self.assertEqual(len(tag_response.content['tags']), 0)
 
@@ -132,25 +131,25 @@ class ReaderClientSingleBookmarkTest(TestCase):
         tags = ['tag', 'another tag']
         tag_string = ', '.join(tags)
         tag_add_response = \
-            self.base_client.add_tags_to_bookmark(bookmark_id, tag_string)
+            self.reader_client.add_tags_to_bookmark(bookmark_id, tag_string)
         self.assertEqual(tag_add_response.status, 202)
 
         # re-fetch tags. should have 2
-        retag_response = self.base_client.get_bookmark_tags(bookmark_id)
+        retag_response = self.reader_client.get_bookmark_tags(bookmark_id)
         self.assertEqual(retag_response.status, 200)
         self.assertEqual(len(retag_response.content['tags']), 2)
         for tag in retag_response.content['tags']:
             self.assertTrue(tag['text'] in tags)
 
         # test getting tags for user
-        user_tag_resp = self.base_client.get_tags()
+        user_tag_resp = self.reader_client.get_tags()
         self.assertEqual(user_tag_resp.status, 200)
         self.assertEqual(len(user_tag_resp.content['tags']), 2)
         for tag in user_tag_resp.content['tags']:
             self.assertTrue(tag['text'] in tags)
 
             # test getting a single tag while we're here
-            single_tag_resp = self.base_client.get_tag(tag['id'])
+            single_tag_resp = self.reader_client.get_tag(tag['id'])
             self.assertEqual(single_tag_resp.status, 200)
             self.assertTrue('applied_count' in single_tag_resp.content)
             self.assertTrue('id' in single_tag_resp.content)
@@ -158,30 +157,38 @@ class ReaderClientSingleBookmarkTest(TestCase):
 
         # delete tags
         for tag in retag_response.content['tags']:
-            del_response = self.base_client.delete_tag_from_bookmark(
+            del_response = self.reader_client.delete_tag_from_bookmark(
                 bookmark_id, tag['id'])
             self.assertEqual(del_response.status, 204)
 
         # check that tags are gone
-        tag_response = self.base_client.get_bookmark_tags(bookmark_id)
+        tag_response = self.reader_client.get_bookmark_tags(bookmark_id)
         self.assertEqual(tag_response.status, 200)
         self.assertEqual(len(tag_response.content['tags']), 0)
 
+    def _get_bookmark_data(self):
+        """
+        Convenience method to get a single bookmark's data.
+        """
+        bm_response = self.reader_client.get_bookmarks()
+        self.assertEqual(bm_response.status, 200)
+        self.assertTrue(len(bm_response.content['bookmarks']) > 0)
+        return bm_response.content['bookmarks'][0]
+
 
 class ReaderClientMultipleBookmarkTest(TestCase):
-    """Tests for bookmark functionality
-
     """
-
+    Tests for bookmark functionality
+    """
     def setUp(self):
-        """Add a few bookmarks.
-
+        """
+        Add a few bookmarks.
         """
         token_pair = xauth(CONSUMER_KEY, CONSUMER_SECRET, USERNAME, PASSWORD)
         self.token_key = token_pair[0]
         self.token_secret = token_pair[1]
 
-        self.base_client = ReaderClient(CONSUMER_KEY, CONSUMER_SECRET,
+        self.reader_client = ReaderClient(CONSUMER_KEY, CONSUMER_SECRET,
             self.token_key, self.token_secret)
 
         self.urls = [
@@ -202,28 +209,28 @@ class ReaderClientMultipleBookmarkTest(TestCase):
         self.all_urls = self.urls + self.favorite_urls + self.archive_urls
 
         for url in self.urls:
-            add_response = self.base_client.add_bookmark(url)
+            add_response = self.reader_client.add_bookmark(url)
             self.assertEqual(add_response.status, 202)
 
         for url in self.favorite_urls:
-            add_response = self.base_client.add_bookmark(url, favorite=True)
+            add_response = self.reader_client.add_bookmark(url, favorite=True)
             self.assertEqual(add_response.status, 202)
 
         for url in self.archive_urls:
-            add_response = self.base_client.add_bookmark(url, archive=True)
+            add_response = self.reader_client.add_bookmark(url, archive=True)
             self.assertEqual(add_response.status, 202)
 
     def test_get_bookmarks(self):
-        """Test getting all bookmarks
-
         """
-        bm_response = self.base_client.get_bookmarks()
+        Test getting all bookmarks
+        """
+        bm_response = self.reader_client.get_bookmarks()
         self.assertEqual(bm_response.status, 200)
         self.assertEqual(
             len(bm_response.content['bookmarks']), len(self.all_urls))
 
         # test favorite bookmarks
-        bm_response = self.base_client.get_bookmarks(favorite=True)
+        bm_response = self.reader_client.get_bookmarks(favorite=True)
         self.assertEqual(bm_response.status, 200)
         self.assertEqual(
             len(bm_response.content['bookmarks']), len(self.favorite_urls))
@@ -231,7 +238,7 @@ class ReaderClientMultipleBookmarkTest(TestCase):
             self.assertTrue(bm['article']['url'] in self.favorite_urls)
 
         # test archive bookmarks
-        bm_response = self.base_client.get_bookmarks(archive=True)
+        bm_response = self.reader_client.get_bookmarks(archive=True)
         self.assertEqual(bm_response.status, 200)
         self.assertEqual(
             len(bm_response.content['bookmarks']), len(self.archive_urls))
@@ -239,26 +246,25 @@ class ReaderClientMultipleBookmarkTest(TestCase):
             self.assertTrue(bm['article']['url'] in self.archive_urls)
 
     def tearDown(self):
-        """Remove all added bookmarks.
-
         """
-        for bm in self.base_client.get_bookmarks().content['bookmarks']:
-            del_response = self.base_client.delete_bookmark(bm['id'])
+        Remove all added bookmarks.
+        """
+        for bm in self.reader_client.get_bookmarks().content['bookmarks']:
+            del_response = self.reader_client.delete_bookmark(bm['id'])
             self.assertEqual(del_response.status, 204)
 
 
 class ParserClientTest(TestCase):
-    """Test case for the Parser Client
-
     """
-
+    Test case for the Parser Client
+    """
     def setUp(self):
         self.parser_client = ParserClient(PARSER_TOKEN)
         self.test_url = 'https://en.wikipedia.org/wiki/Mark_Twain'
 
     def test_generate_url(self):
-        """Test the clients ability to generate urls to endpoints.
-
+        """
+        Test the clients ability to generate urls to endpoints.
         """
         # test root resource
         expected_url = DEFAULT_PARSER_URL_TEMPLATE.format('')
@@ -276,8 +282,8 @@ class ParserClientTest(TestCase):
         self.assertEqual(generated_url, expected_url)
 
     def test_get_root(self):
-        """Test the client's ability to hit the root endpoint.
-
+        """
+        Test the client's ability to hit the root endpoint.
         """
         response = self.parser_client.get_root()
 
@@ -285,8 +291,8 @@ class ParserClientTest(TestCase):
         self.assertEqual(set(response.content.keys()), expected_keys)
 
     def test_get_confidence(self):
-        """Test the client's ability to hit the confidence endpoint.
-
+        """
+        Test the client's ability to hit the confidence endpoint.
         """
         # hit without an article_id or url. Should get an error.
         response = self.parser_client.get_confidence()
@@ -301,9 +307,8 @@ class ParserClientTest(TestCase):
         self.assertTrue(response.content['confidence'] >= .5)
 
     def test_get_article_status(self):
-        """Test the client's ability to hit the parser endpoint with a HEAD
-        request.
-
+        """
+        Test the client's ability to hit the parser endpoint with a HEAD
         """
         # hit without an article_id or url. Should get an error.
         response = self.parser_client.get_confidence()
@@ -315,9 +320,8 @@ class ParserClientTest(TestCase):
         self.assertTrue(response.get('x-article-id') is not None)
 
     def test_get_article_content(self):
-        """Test the client's ability to hit the parser endpoint with a GET
-        request.
-
+        """
+        Test the client's ability to hit the parser endpoint with a GET
         """
         # test with incorrect params
         response = self.parser_client.get_article_content()
@@ -332,9 +336,9 @@ class ParserClientTest(TestCase):
             some_expected_keys.issubset(set(response.content.keys())))
 
     def test_post_article_content(self):
-        """Test the client's ability to hit the parser endpoint with a POST
+        """
+        Test the client's ability to hit the parser endpoint with a POST
         request.
-
         """
         # I'm sorry...
         content = """

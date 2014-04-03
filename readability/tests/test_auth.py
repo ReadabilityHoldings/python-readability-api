@@ -9,13 +9,13 @@ from readability.tests.settings import \
 
 
 class XAuthTestCase(TestCase):
-    """Test XAuth functionality.
-
+    """
+    Test XAuth functionality.
     """
     def test_bad_base_url(self):
-        """If given a bad base url template, the request to the
+        """
+        If given a bad base url template, the request to the
         ACCESS_TOKEN_URL should fail and an exception be raised.
-
         """
         token = None
         with self.assertRaises(Exception):
@@ -24,9 +24,9 @@ class XAuthTestCase(TestCase):
         self.assertEqual(token, None)
 
     def test_bad_consumer_key(self):
-        """If given a bad consumer key, the `xauth` method should raise
+        """
+        If given a bad consumer key, the `xauth` method should raise
         an exception.
-
         """
         token = None
         with self.assertRaises(Exception):
@@ -35,9 +35,9 @@ class XAuthTestCase(TestCase):
         self.assertEqual(token, None)
 
     def test_bad_consumer_secret(self):
-        """If given a bad consumer key, the `xauth` method should raise
+        """
+        If given a bad consumer key, the `xauth` method should raise
         an exception.
-
         """
         token = None
         with self.assertRaises(Exception):
@@ -46,8 +46,8 @@ class XAuthTestCase(TestCase):
         self.assertEqual(token, None)
 
     def test_bad_username(self):
-        """If given a bad username, an exception should be raised.
-
+        """
+        If given a bad username, an exception should be raised.
         """
         token = None
         with self.assertRaises(Exception):
@@ -56,8 +56,8 @@ class XAuthTestCase(TestCase):
         self.assertEqual(token, None)
 
     def test_bad_password(self):
-        """If given a bad password, an exception should be raised.
-
+        """
+        If given a bad password, an exception should be raised.
         """
         token = None
         with self.assertRaises(Exception):
@@ -66,8 +66,8 @@ class XAuthTestCase(TestCase):
         self.assertEqual(token, None)
 
     def test_successful_auth(self):
-        """Test getting a token with proper creds
-
+        """
+        Test getting a token with proper creds
         """
         token = xauth(CONSUMER_KEY, CONSUMER_SECRET, USERNAME, PASSWORD)
         self.assertEqual(len(token), 2)
