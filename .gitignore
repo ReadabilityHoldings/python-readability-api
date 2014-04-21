@@ -4,3 +4,4 @@ readability/tests/settings.py
 docs/_build/*
 build/
 dist/
+.tox/

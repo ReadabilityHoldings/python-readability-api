@@ -1,29 +1,23 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-from __future__ import with_statement
-
-import os
-import sys
-
 from setuptools import setup
 
-
-
-if sys.argv[-1] == 'publish':
-    os.system('python setup.py sdist upload')
-    sys.exit()
-
-required = ['oauth2', 'httplib2==0.9.1', 'python-dateutil']
+required = [
+    'pytest',
+    'requests',
+    'requests_oauthlib',
+    'httplib2==0.9.1',
+    'python-dateutil'
+]
 
 setup(
     name='readability-api',
-    version='0.2.6',
-    description='Python wrapper for the Readability API.',
+    version='1.0.0',
+    description='Python client for the Readability Reader and Parser APIs.',
     long_description=open('README.rst').read(),
     author='The Readability Team',
-    author_email='feedback@readability.com',
-    url='https://www.readability.com/publishers/api',
+    author_email='philip@readability.com',
+    url='https://github.com/arc90/python-readability-api',
     packages=['readability'],
     install_requires=required,
     license='MIT',
@@ -33,10 +27,8 @@ setup(
         'Natural Language :: English',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
-        # 'Programming Language :: Python :: 3.0',
-        # 'Programming Language :: Python :: 3.1',
-        # 'Programming Language :: Python :: 3.2',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: Implementation :: PyPy',
     ),
 )

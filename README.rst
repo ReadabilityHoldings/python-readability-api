@@ -1,40 +1,59 @@
 .. image:: https://badge.fury.io/py/readability-api.png
     :target: http://badge.fury.io/py/readability-api
 
-python-readability
-==================
+.. image:: https://travis-ci.org/arc90/python-readability-api.png
+    :target: https://travis-ci.org/arc90/python-readability-api
 
-Check the `docs <https://readability-python-library.readthedocs.org/en/latest/>`_
-for installation instructions and examples.
+readability-api
+===============
 
+readability-api is the official python client for Readability. It provides
+access to both the Parser API and the Reader API.
 
-License
--------
+The latest version can be installed via pip:
 
-The MIT License::
+.. code-block:: bash
+    
+    pip install readability-api
 
-    Copyright (C) 2013 by Readability, LLC
-
-    Permission is hereby granted, free of charge, to any person obtaining a copy
-    of this software and associated documentation files (the "Software"), to deal
-    in the Software without restriction, including without limitation the rights
-    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    copies of the Software, and to permit persons to whom the Software is
-    furnished to do so, subject to the following conditions:
-
-    The above copyright notice and this permission notice shall be included in
-    all copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-    THE SOFTWARE.
+Please refer to the `official docs
+<https://readability-python-library.readthedocs.org/en/latest/>`_ for more
+information and examples.
 
 
-API Access
-----------
+Tests
+-----
 
-Don't have a Readability API key? Get one `here <https://www.readability.com/account/api>`_.
+Valid Parser, Reader, username, and password must be set as environment
+variables before running the tests. This test suit runs agains the live
+Readability API and also serves as integration tests. We recommend creating a
+seperate testing user account on Readability to avoid disturbing your reading
+list. **Note:** These tests do reset the bookmarks library of the provided user
+when complete. They should *not* be run on your primary user account!
+
+.. code-block:: bash
+
+    # If you don't have it
+    pip install tox
+
+    export READABILITY_CONSUMER_KEY='...'
+    export READABILITY_CONSUMER_SECRET='...'
+    export READABILITY_PARSER_TOKEN='...'
+    export READABILITY_USERNAME='...'
+    export READABILITY_PASSWORD='...'
+
+    tox
+
+
+API Keys and Access
+-------------------
+
+Don't have Readability API keys? You can find them on `your Readability account
+settings page <https://www.readability.com/account/api>`_.
+
+
+Licensing
+---------
+
+The code for readability-api is licensed under the `MIT License
+<http://opensource.org/licenses/MIT>`_
