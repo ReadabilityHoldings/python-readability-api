@@ -8,17 +8,27 @@ This module provides the xauth functionality for the Readability
 Reader API.
 
 """
+from __future__ import unicode_literals
 
 import logging
-from urllib import parse
+import sys
+
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
+
+try:
+    from urllib.parse import parse_qs
+except ImportError:
+    from urlparse import parse_qs
+
 
 import requests
 
-from cgi import parse_qsl
-
 from oauthlib.oauth1 import Client
-from requests_oauthlib import OAuth1
 
+# TODO FIX THIS
 #from .clients import DEFAULT_READER_URL_TEMPLATE
 
 
@@ -39,22 +49,25 @@ def xauth(consumer_key, consumer_secret, username, password,
     :param password: A password
     :param base_url_template: Template for generating Readability API urls.
     """
-    client = Client(consumer_key, client_secret=consumer_secret)
+    client = Client(consumer_key, client_secret=consumer_secret, signature_type='BODY')
     url = base_url_template.format(ACCESS_TOKEN_URL)
-    additional_auth_headers = {
+    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+    params = {
         'x_auth_username': username,
         'x_auth_password': password,
         'x_auth_mode': 'client_auth'
     }
 
-    uri, headers, body = client.sign(url, headers=additional_auth_headers)
-    response = requests.post(uri, headers=headers)
-    import pdb; pdb.set_trace()
+    uri, headers, body = client.sign(url, http_method='POST', body=urlencode(params), headers=headers)
+    response = requests.post(uri, data=body)
     logger.debug('POST to %s.', uri)
 
-    token = dict(parse_qsl(response.content))
+    token = parse_qs(response.content)
     try:
-        token = (token['oauth_token'], token['oauth_token_secret'])
+        # The indexes below are a little weird. parse_qs above gives us
+        # back a dict where each value is a list. We want the first value
+        # in those lists.
+        token = (token[b'oauth_token'][0], token[b'oauth_token_secret'][0])
     except KeyError:
         raise Exception('Invalid Credentials.')
 
