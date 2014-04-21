@@ -12,7 +12,7 @@ import json
 import logging
 import urllib
 
-import oauth2
+# import oauth2
 import httplib2
 
 from .utils import filter_args_to_dict

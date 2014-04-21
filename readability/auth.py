@@ -5,23 +5,31 @@ readability.auth
 ~~~~~~~~~~~~~~~~
 
 This module provides the xauth functionality for the Readability
-HTTP API.
+Reader API.
 
 """
 
 import logging
-import oauth2
-import urllib
+from urllib import parse
+
+import requests
+
 from cgi import parse_qsl
+
+from oauthlib.oauth1 import Client
+from requests_oauthlib import OAuth1
+
+#from .clients import DEFAULT_READER_URL_TEMPLATE
 
 
 logger = logging.getLogger(__name__)
-DEFAULT_BASE_URL_TEMPLATE = 'https://readability.com/api/rest/v1/{0}'
 ACCESS_TOKEN_URL = 'oauth/access_token/'
+
+DEFAULT_READER_URL_TEMPLATE = 'https://www.readability.com/api/rest/v1/{0}'
 
 
 def xauth(consumer_key, consumer_secret, username, password,
-    base_url_template=DEFAULT_BASE_URL_TEMPLATE):
+    base_url_template=DEFAULT_READER_URL_TEMPLATE):
     """
     Returns an OAuth token that can be used with clients.ReaderClient.
 
@@ -30,28 +38,21 @@ def xauth(consumer_key, consumer_secret, username, password,
     :param username: A username
     :param password: A password
     :param base_url_template: Template for generating Readability API urls.
-
     """
-    # fetch oauth token from server
-    consumer = oauth2.Consumer(consumer_key, consumer_secret)
-    client = oauth2.Client(consumer)
-    client.add_credentials(username, password)
-    client.authorizations
-
-    params = {}
-    params['x_auth_username'] = username
-    params['x_auth_password'] = password
-    params['x_auth_mode'] = 'client_auth'
-
-    client.set_signature_method = oauth2.SignatureMethod_HMAC_SHA1()
+    client = Client(consumer_key, client_secret=consumer_secret)
     url = base_url_template.format(ACCESS_TOKEN_URL)
+    additional_auth_headers = {
+        'x_auth_username': username,
+        'x_auth_password': password,
+        'x_auth_mode': 'client_auth'
+    }
 
-    logger.debug('POST to %s.', url)
+    uri, headers, body = client.sign(url, headers=additional_auth_headers)
+    response = requests.post(uri, headers=headers)
+    import pdb; pdb.set_trace()
+    logger.debug('POST to %s.', uri)
 
-    r, content = client.request(
-        url, method='POST', body=urllib.urlencode(params))
-
-    token = dict(parse_qsl(content))
+    token = dict(parse_qsl(response.content))
     try:
         token = (token['oauth_token'], token['oauth_token_secret'])
     except KeyError:
