@@ -41,7 +41,7 @@ class ReaderClient(object):
     def __init__(self, consumer_key, consumer_secret, token_key, token_secret,
         base_url_template=DEFAULT_READER_URL_TEMPLATE):
         """
-        Initialize the ReadeClient.
+        Initialize the ReaderClient.
 
         :param consumer_key: Reader API key
         :param consumer_secret: Reader API secret
@@ -148,7 +148,11 @@ class ReaderClient(object):
 
     def add_bookmark(self, url, favorite=False, archive=False):
         """
-        Adds given bookmark.
+        Adds given bookmark to the authenticated user.
+
+        :param url: URL of the article to bookmark
+        :param favorite: whether or not the bookmark should be favorited
+        :param archive: whether or not the bookmark should be archived
         """
         rdb_url = self._generate_url('bookmarks')
         params = dict(url=url, favorite=int(favorite), archive=int(archive))
@@ -198,7 +202,7 @@ class ReaderClient(object):
 
     def set_read_percent_of_bookmark(self, bookmark_id, read_percent):
         """
-        Set read progress of given bookmark. The requested bookmark must
+        Set the read percentage of given bookmark. The requested bookmark must
         belong to the current user.
 
         :param bookmark_id: ID of the bookmark to update.

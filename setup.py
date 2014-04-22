@@ -15,7 +15,7 @@ required = [
 
 setup(
     name='readability-api',
-    version='0.2.5',
+    version='0.3.0',
     description='Python wrapper for the Readability API.',
     long_description=open('README.rst').read(),
     author='The Readability Team',

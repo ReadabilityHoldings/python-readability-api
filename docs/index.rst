@@ -35,6 +35,10 @@ secret can be obtained from the
 addition to consumer creds, a user's key and secret must also be used for
 authentication.
 
+Under the hood, the ``ReaderClient`` use the popular `requests <http://docs.python-requests.org/en/latest/>`_
+library. The objects returned by the ``ReaderClient`` are instances
+of ``requests.Response``.
+
 Getting a user's favorite bookmarks is easy.
 
 ::
@@ -42,7 +46,7 @@ Getting a user's favorite bookmarks is easy.
     from readability import ReaderClient
     rdb_client = ReaderClient('consumer_token', 'consumer_secret', 'user_key', 'user_secret')
     bookmarks_response = rdb_client.get_bookmarks(favorite=True)
-    print bookmarks_response.content
+    print bookmarks_response.json()
 
     >>> {'bookmarks': [{'user_id': 9999, 'read_percent': u'0.00', ... }
 
@@ -58,6 +62,10 @@ is simpler than the Reader API. All that's needed is a single token that can
 be obtained from the
 `Readability account page <http://www.readability.com/account/api>`_. With a
 token, getting the parsed output for an article is easy.
+
+Under the hood, the ``ParserClient`` use the popular `requests <http://docs.python-requests.org/en/latest/>`_
+library. The objects returned by the ``ParserClient`` are instances
+of ``requests.Response``.
 
 ::
 
