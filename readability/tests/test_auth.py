@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from unittest import TestCase
+# Bad hack. I only installed unittest2 locally in my virtualenv
+# for Python 2.6.7
+try:
+    import unittest2 as unittest
+except ImportError:
+    import unittest
 
 
 from readability import xauth
@@ -8,7 +13,7 @@ from readability.tests.settings import \
         CONSUMER_KEY, CONSUMER_SECRET, PASSWORD, USERNAME
 
 
-class XAuthTestCase(TestCase):
+class XAuthTestCase(unittest.TestCase):
     """
     Test XAuth functionality.
     """
@@ -71,3 +76,7 @@ class XAuthTestCase(TestCase):
         """
         token = xauth(CONSUMER_KEY, CONSUMER_SECRET, USERNAME, PASSWORD)
         self.assertEqual(len(token), 2)
+
+
+if __name__ == '__main__':
+    unittest.main()

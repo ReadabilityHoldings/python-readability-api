@@ -1,18 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import with_statement
-
 import os
 import sys
 
 from setuptools import setup
-
-
-
-if sys.argv[-1] == 'publish':
-    os.system('python setup.py sdist upload')
-    sys.exit()
 
 required = [
     'requests',
@@ -28,7 +20,7 @@ setup(
     long_description=open('README.rst').read(),
     author='The Readability Team',
     author_email='feedback@readability.com',
-    url='https://www.readability.com/publishers/api',
+    url='https://www.readability.com/developers/api',
     packages= ['readability'],
     install_requires=required,
     license='MIT',

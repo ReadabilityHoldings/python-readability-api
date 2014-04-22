@@ -50,7 +50,7 @@ def cast_datetime_filter(value):
         a `datetime` object.
 
     """
-    if isinstance(value, basestring):
+    if isinstance(value, str):
         dtime = parse_datetime(value)
 
     elif isinstance(value, datetime):

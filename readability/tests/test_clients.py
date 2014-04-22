@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from unittest import TestCase
+# Bad hack. I only installed unittest2 locally in my virtualenv
+# for Python 2.6.7
+try:
+    import unittest2 as unittest
+except ImportError:
+    import unittest
 
 from readability import xauth, ParserClient, ReaderClient
 from readability.clients import DEFAULT_PARSER_URL_TEMPLATE
@@ -8,7 +13,7 @@ from readability.tests.settings import \
         CONSUMER_KEY, CONSUMER_SECRET, PARSER_TOKEN, PASSWORD, USERNAME
 
 
-class ReaderClientNoBookmarkTest(TestCase):
+class ReaderClientNoBookmarkTest(unittest.TestCase):
     """
     Tests for the Readability ReaderClient class that need no bookmarks.
     """
@@ -69,7 +74,7 @@ class ReaderClientNoBookmarkTest(TestCase):
         self.assertEqual(len(response_json['tags']), 0)
 
 
-class ReaderClientSingleBookmarkTest(TestCase):
+class ReaderClientSingleBookmarkTest(unittest.TestCase):
     """
     Tests that only need one bookmark
     """
@@ -178,7 +183,7 @@ class ReaderClientSingleBookmarkTest(TestCase):
         return bm_response_json['bookmarks'][0]
 
 
-class ReaderClientMultipleBookmarkTest(TestCase):
+class ReaderClientMultipleBookmarkTest(unittest.TestCase):
     """
     Tests for bookmark functionality
     """
@@ -256,7 +261,7 @@ class ReaderClientMultipleBookmarkTest(TestCase):
             self.assertEqual(del_response.status_code, 204)
 
 
-class ParserClientTest(TestCase):
+class ParserClientTest(unittest.TestCase):
     """
     Test case for the Parser Client
     """
@@ -588,3 +593,7 @@ class ParserClientTest(TestCase):
         self.assertEqual(response.status_code, 200)
         # should have gotten back content that is shorter than original
         self.assertTrue(len(content) > len(response.json()['content']))
+
+
+if __name__ == '__main__':
+    unittest.main()
