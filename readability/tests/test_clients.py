@@ -57,15 +57,16 @@ class ReaderClientNoBookmarkTest(TestCase):
         received_keys = set(user_response.json().keys())
         self.assertTrue(some_expected_keys.issubset(received_keys))
 
-    def test_get_tags(self):
+    def test_get_empty_tags(self):
         """
-        Test getting tags.
+        Test getting an empty set of tags. Since there are no bookmarks
+        present in this test, there should be no tags.
         """
         tag_response = self.reader_client.get_tags()
         self.assertEqual(tag_response.status_code, 200)
         response_json = tag_response.json()
         self.assertTrue('tags' in response_json)
-        self.assertTrue(len(response_json['tags']) > 0)
+        self.assertEqual(len(response_json['tags']), 0)
 
 
 class ReaderClientSingleBookmarkTest(TestCase):
@@ -91,7 +92,7 @@ class ReaderClientSingleBookmarkTest(TestCase):
         """
         Remove all added bookmarks.
         """
-        for bm in self.reader_client.get_bookmarks().content['bookmarks']:
+        for bm in self.reader_client.get_bookmarks().json()['bookmarks']:
             del_response = self.reader_client.delete_bookmark(bm['id'])
             self.assertEqual(del_response.status_code, 204)
 
@@ -104,7 +105,7 @@ class ReaderClientSingleBookmarkTest(TestCase):
         bm_response = self.reader_client.get_bookmark(bookmark_id)
         self.assertEqual(bm_response.status_code, 200)
         some_expected_keys = set(['article', 'user_id', 'favorite', 'id'])
-        received_keys = set(bm_response.content.json().keys())
+        received_keys = set(bm_response.json().keys())
         self.assertTrue(some_expected_keys.issubset(received_keys))
 
     def test_archive_bookmark(self):
@@ -138,42 +139,43 @@ class ReaderClientSingleBookmarkTest(TestCase):
         retag_response = self.reader_client.get_bookmark_tags(bookmark_id)
         self.assertEqual(retag_response.status_code, 200)
         self.assertEqual(len(retag_response.json()['tags']), 2)
-        for tag in retag_response.content['tags']:
+        for tag in retag_response.json()['tags']:
             self.assertTrue(tag['text'] in tags)
 
         # test getting tags for user
         user_tag_resp = self.reader_client.get_tags()
         self.assertEqual(user_tag_resp.status_code, 200)
-        self.assertEqual(len(user_tag_resp.json()[b'tags']), 2)
-        for tag in user_tag_resp.json()[b'tags']:
-            self.assertTrue(tag[b'text'] in tags)
+        self.assertEqual(len(user_tag_resp.json()['tags']), 2)
+        for tag in user_tag_resp.json()['tags']:
+            self.assertTrue(tag['text'] in tags)
 
             # test getting a single tag while we're here
             single_tag_resp = self.reader_client.get_tag(tag['id'])
             self.assertEqual(single_tag_resp.status_code, 200)
-            self.assertTrue(b'applied_count' in single_tag_resp.json())
-            self.assertTrue(b'id' in single_tag_resp.json())
-            self.assertTrue(b'text' in single_tag_resp.json())
+            self.assertTrue('applied_count' in single_tag_resp.json())
+            self.assertTrue('id' in single_tag_resp.json())
+            self.assertTrue('text' in single_tag_resp.json())
 
         # delete tags
-        for tag in retag_response.json()[b'tags']:
+        for tag in retag_response.json()['tags']:
             del_response = self.reader_client.delete_tag_from_bookmark(
-                bookmark_id, tag[b'id'])
+                bookmark_id, tag['id'])
             self.assertEqual(del_response.status_code, 204)
 
         # check that tags are gone
         tag_response = self.reader_client.get_bookmark_tags(bookmark_id)
-        self.assertEqual(tag_response.status, 200)
-        self.assertEqual(len(tag_response.content['tags']), 0)
+        self.assertEqual(tag_response.status_code, 200)
+        self.assertEqual(len(tag_response.json()['tags']), 0)
 
     def _get_bookmark_data(self):
         """
         Convenience method to get a single bookmark's data.
         """
         bm_response = self.reader_client.get_bookmarks()
-        self.assertEqual(bm_response.status, 200)
-        self.assertTrue(len(bm_response.content['bookmarks']) > 0)
-        return bm_response.content['bookmarks'][0]
+        self.assertEqual(bm_response.status_code, 200)
+        bm_response_json = bm_response.json()
+        self.assertTrue(len(bm_response_json['bookmarks']) > 0)
+        return bm_response_json['bookmarks'][0]
 
 
 class ReaderClientMultipleBookmarkTest(TestCase):
@@ -249,7 +251,7 @@ class ReaderClientMultipleBookmarkTest(TestCase):
         """
         Remove all added bookmarks.
         """
-        for bm in self.reader_client.get_bookmarks().content['bookmarks']:
+        for bm in self.reader_client.get_bookmarks().json()['bookmarks']:
             del_response = self.reader_client.delete_bookmark(bm['id'])
             self.assertEqual(del_response.status_code, 204)
 
