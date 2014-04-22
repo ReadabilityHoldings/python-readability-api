@@ -10,10 +10,15 @@ This module provies a client for the Reader API.
 
 import json
 import logging
-import urllib
 
-# import oauth2
-import httplib2
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
+
+import requests
+
+from requests_oauthlib import OAuth1Session
 
 from .utils import filter_args_to_dict
 
@@ -27,48 +32,7 @@ ACCEPTED_BOOKMARK_FILTERS = ['archive', 'favorite', 'domain', 'added_since'
     'only_deleted', 'tags']
 
 
-class BaseClient(object):
-    """
-    A base class for Readability clients.
-    """
-    def _create_response(self, response, content):
-        """
-        Modify the httplib2.Repsonse object to return.
-
-        Add two attributes to it:
-
-        1) `raw_content` - this is the untouched content returned from the
-        server.
-
-        2) `content` - this is a serialized response using `json.loads`.
-
-        If the response was an error of any kind, the reponse content
-        will be:
-
-        ::
-            {'error_message': <message from server>}
-
-        The above will also be ran through `json.loads`.
-
-        :param response: Repsonse received from API
-        :param content: Content received from API
-
-        """
-        response.raw_content = content
-        try:
-            content = json.loads(content)
-        except ValueError:
-            # didn't get json output. Assuming it's a string
-            if response.status >= 400:
-                content = {'error_message': content}
-            else:
-                content = {'message': content}
-        response.content = content
-
-        return response
-
-
-class ReaderClient(BaseClient):
+class ReaderClient(object):
     """
     Client for interacting with the Readability Reader API.
 
@@ -89,9 +53,8 @@ class ReaderClient(BaseClient):
             doesn't have access to (staging, local dev, etc).
         """
         self.base_url_template = base_url_template
-        self.token = oauth2.Token(token_key, token_secret)
-        self.consumer = oauth2.Consumer(consumer_key, consumer_secret)
-        self.oauth_client = oauth2.Client(self.consumer, self.token)
+        self.oauth_session = OAuth1Session(consumer_key,
+            consumer_secret, token_key, token_secret)
 
     def get(self, url):
         """
@@ -100,8 +63,7 @@ class ReaderClient(BaseClient):
         :param url: url to which to make a GET request.
         """
         logger.debug('Making GET request to %s', url)
-        return self._create_response(
-            *self.oauth_client.request(url, method='GET'))
+        return self.oauth_session.get(url)
 
     def post(self, url, post_params=None):
         """
@@ -110,10 +72,9 @@ class ReaderClient(BaseClient):
         :param url: url to which to make a POST request.
         :param post_params: parameters to be sent in the request's body.
         """
-        params = urllib.urlencode(post_params)
+        params = urlencode(post_params)
         logger.debug('Making POST request to %s with body %s', url, params)
-        return self._create_response(
-            *self.oauth_client.request(url, method='POST', body=params))
+        return self.oauth_session.post(url, data=params)
 
     def delete(self, url):
         """
@@ -122,8 +83,7 @@ class ReaderClient(BaseClient):
         :param url: The url to which to send a DELETE request.
         """
         logger.debug('Making DELETE request to %s', url)
-        return self._create_response(
-            *self.oauth_client.request(url, method='DELETE'))
+        return self.oauth_session.delete(url)
 
     def _generate_url(self, resource, query_params=None):
         """
@@ -136,7 +96,7 @@ class ReaderClient(BaseClient):
         """
         if query_params:
             resource = '{0}?{1}'.format(
-                resource, urllib.urlencode(query_params))
+                resource, urlencode(query_params))
 
         return self.base_url_template.format(resource)
 
@@ -320,7 +280,7 @@ class ReaderClient(BaseClient):
         return self.get(url)
 
 
-class ParserClient(BaseClient):
+class ParserClient(object):
     """
     Client for interacting with the Readability Parser API.
 
@@ -349,8 +309,7 @@ class ParserClient(BaseClient):
         :param url: url to which to make the request
         """
         logger.debug('Making GET request to %s', url)
-        http = httplib2.Http()
-        return self._create_response(*http.request(url, 'GET'))
+        return requests.get(url)
 
     def head(self, url):
         """
@@ -359,8 +318,7 @@ class ParserClient(BaseClient):
         :param url: url to which to make the request
         """
         logger.debug('Making HEAD request to %s', url)
-        http = httplib2.Http()
-        return self._create_response(*http.request(url, 'HEAD'))
+        return requests.head(url)
 
     def post(self, url, post_params=None):
         """
@@ -370,10 +328,9 @@ class ParserClient(BaseClient):
         :param post_params: POST data to send along. Expected to be a dict.
         """
         post_params['token'] = self.token
-        params = urllib.urlencode(post_params)
+        params = urlencode(post_params)
         logger.debug('Making POST request to %s with body %s', url, params)
-        http = httplib2.Http()
-        return self._create_response(*http.request(url, 'POST', body=params))
+        return requests.post(url, data=params)
 
     def _generate_url(self, resource, query_params=None):
         """
@@ -386,7 +343,7 @@ class ParserClient(BaseClient):
         if query_params:
             # extra & is for the token to be added
             resource = '{0}?{1}&'.format(
-                resource, urllib.urlencode(query_params))
+                resource, urlencode(query_params))
         else:
             # if we don't have query parameters, setup the url with the
             # resource name and question mark so that we can add the token
@@ -455,7 +412,7 @@ class ParserClient(BaseClient):
         Send a HEAD request to the `parser` endpoint to the parser API to
         get the articles status.
 
-        Returned is a `httplib2.Response` object. The id and status for the
+        Returned is a `requests.Response` object. The id and status for the
         article can be extracted from the `X-Article-Id` and `X-Article-Status`
         headers.
 
