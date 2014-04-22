@@ -28,14 +28,11 @@ import requests
 
 from oauthlib.oauth1 import Client
 
-# TODO FIX THIS
-#from .clients import DEFAULT_READER_URL_TEMPLATE
+from .clients import DEFAULT_READER_URL_TEMPLATE
 
 
 logger = logging.getLogger(__name__)
 ACCESS_TOKEN_URL = 'oauth/access_token/'
-
-DEFAULT_READER_URL_TEMPLATE = 'https://www.readability.com/api/rest/v1/{0}'
 
 
 def xauth(consumer_key, consumer_secret, username, password,
@@ -49,7 +46,8 @@ def xauth(consumer_key, consumer_secret, username, password,
     :param password: A password
     :param base_url_template: Template for generating Readability API urls.
     """
-    client = Client(consumer_key, client_secret=consumer_secret, signature_type='BODY')
+    client = Client(consumer_key, client_secret=consumer_secret,
+        signature_type='BODY')
     url = base_url_template.format(ACCESS_TOKEN_URL)
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     params = {
@@ -58,7 +56,8 @@ def xauth(consumer_key, consumer_secret, username, password,
         'x_auth_mode': 'client_auth'
     }
 
-    uri, headers, body = client.sign(url, http_method='POST', body=urlencode(params), headers=headers)
+    uri, headers, body = client.sign(url, http_method='POST',
+        body=urlencode(params), headers=headers)
     response = requests.post(uri, data=body)
     logger.debug('POST to %s.', uri)
 
