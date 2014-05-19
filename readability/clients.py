@@ -21,10 +21,23 @@ from .utils import filter_args_to_dict
 logger = logging.getLogger(__name__)
 DEFAULT_READER_URL_TEMPLATE = 'https://www.readability.com/api/rest/v1/{0}'
 DEFAULT_PARSER_URL_TEMPLATE = 'https://www.readability.com/api/content/v1/{0}'
-ACCEPTED_BOOKMARK_FILTERS = ['archive', 'favorite', 'domain', 'added_since'
-    'added_until', 'opened_since', 'opened_until', 'archived_since'
-    'archived_until', 'updated_since', 'updated_until', 'page', 'per_page',
-    'only_deleted', 'tags']
+ACCEPTED_BOOKMARK_FILTERS = [
+    'added_since',
+    'added_until',
+    'archive',
+    'archived_since',
+    'archived_until',
+    'domain',
+    'favorite',
+    'only_deleted',
+    'opened_since',
+    'opened_until',
+    'page',
+    'per_page',
+    'tags',
+    'updated_since',
+    'updated_until',
+]
 
 
 class BaseClient(object):
