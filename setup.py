@@ -14,17 +14,17 @@ if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist upload')
     sys.exit()
 
-required = ['oauth2', 'httplib2==0.8.0', 'python-dateutil']
+required = ['oauth2', 'httplib2==0.9.1', 'python-dateutil']
 
 setup(
     name='readability-api',
-    version='0.2.5',
+    version='0.2.6',
     description='Python wrapper for the Readability API.',
     long_description=open('README.rst').read(),
     author='The Readability Team',
     author_email='feedback@readability.com',
     url='https://www.readability.com/publishers/api',
-    packages= ['readability'],
+    packages=['readability'],
     install_requires=required,
     license='MIT',
     classifiers=(
