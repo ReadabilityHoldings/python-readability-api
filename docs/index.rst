@@ -1,71 +1,101 @@
-.. Readability API Python Library documentation master file, created by
-   sphinx-quickstart on Tue May 28 14:41:33 2013.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+Readability Python API
+======================
 
-Welcome to Readability API Python Library's documentation!
-==========================================================
+.. |parser-docs| raw:: html
 
-Release v\ |version|.
+    <a href="https://www.readability.com/developers/api/parser" target="_blank">Parser</a>
+
+.. |reader-docs| raw:: html
+
+    <a href="https://www.readability.com/developers/api/reader" target="_blank">Reader</a>
+
+.. |repo-link| raw:: html
+
+    <a href="https://github.com/arc90/python-readability-api" target="_blank">Github</a>
+
+.. |pypi-link| raw:: html
+
+    <a href="https://pypi.python.org/pypi/readability-api/" target="_blank">PyPI</a>
+
+Version |version|
+
+The official Python client library for the Readability |parser-docs| and
+|reader-docs| APIs.
+
+Development of the readability-api package is hosted on |repo-link|. The
+package itself is hosted on |pypi-link| and can easily be installed using pip.
 
 
-.. toctree::
-   :maxdepth: 2
+Version 1.0.0 Notice
+--------------------
 
-   clients
+Version 1.0 and up have fundamentally changed the objects returned by calls to
+the API. The underlying `requests.Response
+<http://docs.python-requests.org/en/latest/api/#requests.Response>`_ objects
+are returned which greatly increases transparency and ease of development.
+
+This is a departure from the 0.x releases which provided wrapped objects and
+hid the http request mechanics. These releases also did not use the Requests
+library. Version 1.0 also transitions to using |requests-oauthlib| for oAuth
+support.
+
+In addition, 1.x introduces python3 support (woohoo!)
+
+.. |requests-oauthlib| raw:: html
+    
+    <a href="https://github.com/requests/requests-oauthlib" target="_blank">requests-oauthlib</a>
 
 
 Installation
 ------------
 
-The Readability package is hosted on `Github <https://github.com/arc90/python-readability-api>`_ and
-can easily be installed using `pip <http://www.pip-installer.org/>`_.
+.. code-block:: bash
+
+    pip install readability-api
 
 
-    $ pip install readability-api
-
-
-Reader API Client
------------------
-
-The `Reader API <https://www.readability.com/developers/api/reader>`_ client
-requires four pieces of credential data. A consumer key and consumer
-secret can be obtained from the
-`Readability account page <https://www.readability.com/settings/account>`_. In
-addition to consumer creds, a user's key and secret must also be used for
-authentication.
+Examples
+--------
 
 Getting a user's favorite bookmarks is easy.
 
-::
+.. code-block:: python
 
     from readability import ReaderClient
-    rdb_client = ReaderClient('consumer_token', 'consumer_secret', 'user_key', 'user_secret')
-    bookmarks_response = rdb_client.get_bookmarks(favorite=True)
-    print bookmarks_response.content
 
+    # If no client credentials are passed to ReaderClient's constructor, they
+    # will be looked for in your environment variables 
+    client = ReaderClient(token_key="a user's key", token_secret"a user's secret")
+    bookmarks_response = client.get_bookmarks(favorite=True)
+
+    print(bookmarks_response.json())
     >>> {'bookmarks': [{'user_id': 9999, 'read_percent': u'0.00', ... }
 
 See :class:`readability.ReaderClient` docs for a complete list of
 available functionality.
 
 
-Parser API Client
------------------
-
-Authentication with the `Parser API <http://readability.com/developers/api/parser>`_
-is simpler than the Reader API. All that's needed is a single token that can
-be obtained from the
-`Readability account page <http://www.readability.com/account/api>`_. With a
-token, getting the parsed output for an article is easy.
-
-::
+.. code-block:: python
 
    from readability import ParserClient
+
    parser_client = ParserClient('your_parser_token')
-   parser_response = parser_client.get_article_content('http://www.some-web-page/blog.html')
-   print parser_response.content['content']
-   >>> {"content" <div class=\"article-text\">\n<p>I'm idling outside Diamante's, [snip] ...</p></div>", ... }
+   parser_response = parser_client.get_article('http://paulgraham.com/altair.html')
+   article = parser_response.json()
+
+   print(article['title'])
+   >>> "What Microsoft Is this the Altair Basic of?"
+
+   print(article['content'])
+   >>> "<div><p>February 2015<p>One of the most valuable exercises you can try if you ..."
 
 See :class:`readability.ParserClient` docs for a complete list of
 available functionality.
+
+
+.. toctree::
+    :hidden:
+
+    Authentication <auth>
+    ReaderClient <reader>
+    ParserClient <parser>

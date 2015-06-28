@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
 
-from unittest import TestCase
+# Bad hack. I only installed unittest2 locally in my virtualenv
+# for Python 2.6.7
+try:
+    import unittest2 as unittest
+except ImportError:
+    import unittest
 
 
 from readability import xauth
-from readability.tests.settings import \
-        CONSUMER_KEY, CONSUMER_SECRET, PASSWORD, USERNAME
 
 
-class XAuthTestCase(TestCase):
+class XAuthTestCase(unittest.TestCase):
     """
     Test XAuth functionality.
     """
@@ -19,8 +22,7 @@ class XAuthTestCase(TestCase):
         """
         token = None
         with self.assertRaises(Exception):
-            token = xauth(CONSUMER_KEY, CONSUMER_SECRET, USERNAME, PASSWORD,
-                base_url_template='https://arc90.com/{0}')
+            token = xauth(base_url_template='https://arc90.com/{0}')
         self.assertEqual(token, None)
 
     def test_bad_consumer_key(self):
@@ -30,8 +32,7 @@ class XAuthTestCase(TestCase):
         """
         token = None
         with self.assertRaises(Exception):
-            token = \
-                xauth('bad consumer key', CONSUMER_SECRET, USERNAME, PASSWORD)
+            token = xauth(consumer_key='bad consumer key')
         self.assertEqual(token, None)
 
     def test_bad_consumer_secret(self):
@@ -41,8 +42,7 @@ class XAuthTestCase(TestCase):
         """
         token = None
         with self.assertRaises(Exception):
-            token = \
-                xauth(CONSUMER_KEY, 'bad consumer secret', USERNAME, PASSWORD)
+            token = xauth(consumer_secret='bad consumer secret')
         self.assertEqual(token, None)
 
     def test_bad_username(self):
@@ -51,8 +51,7 @@ class XAuthTestCase(TestCase):
         """
         token = None
         with self.assertRaises(Exception):
-            token = \
-                xauth(CONSUMER_KEY, CONSUMER_SECRET, 'bad username', PASSWORD)
+            token = xauth(username='bad username')
         self.assertEqual(token, None)
 
     def test_bad_password(self):
@@ -61,13 +60,17 @@ class XAuthTestCase(TestCase):
         """
         token = None
         with self.assertRaises(Exception):
-            token = \
-                xauth(CONSUMER_KEY, CONSUMER_SECRET, USERNAME, 'badpassword')
+            token = xauth(password='badpassword')
         self.assertEqual(token, None)
 
     def test_successful_auth(self):
         """
         Test getting a token with proper creds
         """
-        token = xauth(CONSUMER_KEY, CONSUMER_SECRET, USERNAME, PASSWORD)
+        # Credentials should be set as environment variables when running tests
+        token = xauth()
         self.assertEqual(len(token), 2)
+
+
+if __name__ == '__main__':
+    unittest.main()

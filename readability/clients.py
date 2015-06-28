@@ -8,19 +8,23 @@ This module provies a client for the Reader API.
 
 """
 
-import json
 import logging
-import urllib
 
-import oauth2
-import httplib2
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
 
-from .utils import filter_args_to_dict
+import requests
 
+from requests_oauthlib import OAuth1Session
+
+from readability.core import required_from_env
+from readability.utils import filter_args_to_dict
 
 logger = logging.getLogger(__name__)
-DEFAULT_READER_URL_TEMPLATE = 'https://www.readability.com/api/rest/v1/{0}'
-DEFAULT_PARSER_URL_TEMPLATE = 'https://www.readability.com/api/content/v1/{0}'
+DEFAULT_READER_URL_TEMPLATE = 'https://www.readability.com/api/rest/v1/{}'
+DEFAULT_PARSER_URL_TEMPLATE = 'https://www.readability.com/api/content/v1/{}'
 ACCEPTED_BOOKMARK_FILTERS = [
     'added_since',
     'added_until',
@@ -40,71 +44,33 @@ ACCEPTED_BOOKMARK_FILTERS = [
 ]
 
 
-class BaseClient(object):
-    """
-    A base class for Readability clients.
-    """
-    def _create_response(self, response, content):
-        """
-        Modify the httplib2.Repsonse object to return.
 
-        Add two attributes to it:
-
-        1) `raw_content` - this is the untouched content returned from the
-        server.
-
-        2) `content` - this is a serialized response using `json.loads`.
-
-        If the response was an error of any kind, the reponse content
-        will be:
-
-        ::
-            {'error_message': <message from server>}
-
-        The above will also be ran through `json.loads`.
-
-        :param response: Repsonse received from API
-        :param content: Content received from API
-
-        """
-        response.raw_content = content
-        try:
-            content = json.loads(content)
-        except ValueError:
-            # didn't get json output. Assuming it's a string
-            if response.status >= 400:
-                content = {'error_message': content}
-            else:
-                content = {'message': content}
-        response.content = content
-
-        return response
-
-
-class ReaderClient(BaseClient):
+class ReaderClient(object):
     """
     Client for interacting with the Readability Reader API.
 
     Docs can be found at `http://www.readability.com/developers/api/reader`.
     """
-    def __init__(self, consumer_key, consumer_secret, token_key, token_secret,
-        base_url_template=DEFAULT_READER_URL_TEMPLATE):
+    def __init__(self, token_key, token_secret,
+        base_url_template=DEFAULT_READER_URL_TEMPLATE, **xargs):
         """
-        Initialize the ReadeClient.
+        Initialize the ReaderClient.
 
-        :param consumer_key: Reader API key
-        :param consumer_secret: Reader API secret
+        :param consumer_key: Reader API key, otherwise read from READABILITY_CONSUMER_KEY.
+        :param consumer_secret: Reader API secret, otherwise read from READABILITY_CONSUMER_SECRET.
         :param token_key: Readability user token key
         :param token_secret: Readability user token secret
         :param base_url_template (optional): Template used to build URL to
             which requests will be sent. This shouldn't need to be passed as the
             main purpose for it is testing environments that the user probably
             doesn't have access to (staging, local dev, etc).
+
         """
+        consumer_key = xargs.get('consumer_key', required_from_env('READABILITY_CONSUMER_KEY'))
+        consumer_secret = xargs.get('consumer_secret', required_from_env('READABILITY_CONSUMER_SECRET'))
+
         self.base_url_template = base_url_template
-        self.token = oauth2.Token(token_key, token_secret)
-        self.consumer = oauth2.Consumer(consumer_key, consumer_secret)
-        self.oauth_client = oauth2.Client(self.consumer, self.token)
+        self.oauth_session = OAuth1Session(consumer_key, consumer_secret, token_key, token_secret)
 
     def get(self, url):
         """
@@ -113,8 +79,7 @@ class ReaderClient(BaseClient):
         :param url: url to which to make a GET request.
         """
         logger.debug('Making GET request to %s', url)
-        return self._create_response(
-            *self.oauth_client.request(url, method='GET'))
+        return self.oauth_session.get(url)
 
     def post(self, url, post_params=None):
         """
@@ -123,10 +88,9 @@ class ReaderClient(BaseClient):
         :param url: url to which to make a POST request.
         :param post_params: parameters to be sent in the request's body.
         """
-        params = urllib.urlencode(post_params)
+        params = urlencode(post_params)
         logger.debug('Making POST request to %s with body %s', url, params)
-        return self._create_response(
-            *self.oauth_client.request(url, method='POST', body=params))
+        return self.oauth_session.post(url, data=params)
 
     def delete(self, url):
         """
@@ -135,8 +99,7 @@ class ReaderClient(BaseClient):
         :param url: The url to which to send a DELETE request.
         """
         logger.debug('Making DELETE request to %s', url)
-        return self._create_response(
-            *self.oauth_client.request(url, method='DELETE'))
+        return self.oauth_session.delete(url)
 
     def _generate_url(self, resource, query_params=None):
         """
@@ -149,7 +112,7 @@ class ReaderClient(BaseClient):
         """
         if query_params:
             resource = '{0}?{1}'.format(
-                resource, urllib.urlencode(query_params))
+                resource, urlencode(query_params))
 
         return self.base_url_template.format(resource)
 
@@ -199,12 +162,23 @@ class ReaderClient(BaseClient):
         url = self._generate_url('bookmarks/{0}'.format(bookmark_id))
         return self.get(url)
 
-    def add_bookmark(self, url, favorite=False, archive=False):
+    def add_bookmark(self, url, favorite=False, archive=False, allow_duplicates=True):
         """
-        Adds given bookmark.
+        Adds given bookmark to the authenticated user.
+
+        :param url: URL of the article to bookmark
+        :param favorite: whether or not the bookmark should be favorited
+        :param archive: whether or not the bookmark should be archived
+        :param allow_duplicates: whether or not to allow duplicate bookmarks to
+            be created for a given url
         """
         rdb_url = self._generate_url('bookmarks')
-        params = dict(url=url, favorite=int(favorite), archive=int(archive))
+        params = {
+            "url": url,
+            "favorite": int(favorite),
+            "archive": int(archive),
+            "allow_duplicates": int(allow_duplicates)
+        }
         return self.post(rdb_url, params)
 
     def update_bookmark(self, bookmark_id, favorite=None, archive=None, read_percent=None):
@@ -251,7 +225,7 @@ class ReaderClient(BaseClient):
 
     def set_read_percent_of_bookmark(self, bookmark_id, read_percent):
         """
-        Set read progress of given bookmark. The requested bookmark must
+        Set the read percentage of given bookmark. The requested bookmark must
         belong to the current user.
 
         :param bookmark_id: ID of the bookmark to update.
@@ -333,17 +307,17 @@ class ReaderClient(BaseClient):
         return self.get(url)
 
 
-class ParserClient(BaseClient):
+class ParserClient(object):
     """
     Client for interacting with the Readability Parser API.
 
     Docs can be found at `http://www.readability.com/developers/api/parser`.
     """
-    def __init__(self, token, base_url_template=DEFAULT_PARSER_URL_TEMPLATE):
+    def __init__(self, base_url_template=DEFAULT_PARSER_URL_TEMPLATE, **xargs):
         """
         Initialize client.
 
-        :param token: parser API token.
+        :param token: parser API token, otherwise read from READABILITY_PARSER_TOKEN.
         :param base_url_template (optional): Template used to build URL to
             which requests will be sent. This shouldn't need to be passed as the
             main purpose for it is testing environments that the user probably
@@ -352,7 +326,7 @@ class ParserClient(BaseClient):
         logger.debug('Initializing ParserClient with base url template %s',
             base_url_template)
 
-        self.token = token
+        self.token = xargs.get('token', required_from_env('READABILITY_PARSER_TOKEN'))
         self.base_url_template = base_url_template
 
     def get(self, url):
@@ -362,8 +336,7 @@ class ParserClient(BaseClient):
         :param url: url to which to make the request
         """
         logger.debug('Making GET request to %s', url)
-        http = httplib2.Http()
-        return self._create_response(*http.request(url, 'GET'))
+        return requests.get(url)
 
     def head(self, url):
         """
@@ -372,8 +345,7 @@ class ParserClient(BaseClient):
         :param url: url to which to make the request
         """
         logger.debug('Making HEAD request to %s', url)
-        http = httplib2.Http()
-        return self._create_response(*http.request(url, 'HEAD'))
+        return requests.head(url)
 
     def post(self, url, post_params=None):
         """
@@ -383,10 +355,9 @@ class ParserClient(BaseClient):
         :param post_params: POST data to send along. Expected to be a dict.
         """
         post_params['token'] = self.token
-        params = urllib.urlencode(post_params)
+        params = urlencode(post_params)
         logger.debug('Making POST request to %s with body %s', url, params)
-        http = httplib2.Http()
-        return self._create_response(*http.request(url, 'POST', body=params))
+        return requests.post(url, data=params)
 
     def _generate_url(self, resource, query_params=None):
         """
@@ -396,20 +367,9 @@ class ParserClient(BaseClient):
         `''` (empty string) for root resource, `'parser'`, `'confidence'`.
         :param query_params: Data to be passed as query parameters.
         """
+        resource = '{resource}?token={token}'.format(resource=resource, token=self.token)
         if query_params:
-            # extra & is for the token to be added
-            resource = '{0}?{1}&'.format(
-                resource, urllib.urlencode(query_params))
-        else:
-            # if we don't have query parameters, setup the url with the
-            # resource name and question mark so that we can add the token
-            # easier
-            resource = '{0}?'.format(resource)
-
-        # add token
-        resource = '{0}token={1}'.format(resource, self.token)
-
-        # apply base url template and return
+            resource += "&{}".format(urlencode(query_params))
         return self.base_url_template.format(resource)
 
     def get_root(self):
@@ -419,10 +379,10 @@ class ParserClient(BaseClient):
         url = self._generate_url('')
         return self.get(url)
 
-    def get_article_content(self, url=None, article_id=None, max_pages=25):
+    def get_article(self, url=None, article_id=None, max_pages=25):
         """
         Send a GET request to the `parser` endpoint of the parser API to get
-        article content.
+        back the representation of an article.
 
         The article can be identified by either a URL or an id that exists
         in Readability.
@@ -457,10 +417,9 @@ class ParserClient(BaseClient):
         """
         params = {
             'doc': content,
-            'url': url,
             'max_pages': max_pages
         }
-        url = self._generate_url('parser')
+        url = self._generate_url('parser', {"url": url})
         return self.post(url, post_params=params)
 
     def get_article_status(self, url=None, article_id=None):
@@ -468,7 +427,7 @@ class ParserClient(BaseClient):
         Send a HEAD request to the `parser` endpoint to the parser API to
         get the articles status.
 
-        Returned is a `httplib2.Response` object. The id and status for the
+        Returned is a `requests.Response` object. The id and status for the
         article can be extracted from the `X-Article-Id` and `X-Article-Status`
         headers.
 

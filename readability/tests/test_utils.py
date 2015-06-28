@@ -1,13 +1,19 @@
 # -*- coding: utf-8 -*-
+# Bad hack. I only installed unittest2 locally in my virtualenv
+# for Python 2.6.7
+try:
+    import unittest2 as unittest
+except ImportError:
+    import unittest
 
-from datetime import datetime
 from unittest import TestCase
+from datetime import datetime
 
 from readability.utils import \
     cast_datetime_filter, cast_integer_filter, filter_args_to_dict
 
 
-class CastDatetimeFilterTestCase(TestCase):
+class CastDatetimeFilterTestCase(unittest.TestCase):
     """
     Tests for the `cast_datetime_filter` function.
     """
@@ -37,7 +43,7 @@ class CastDatetimeFilterTestCase(TestCase):
         self.assertEqual(actual_output, expected_output)
 
 
-class CastIntegerFilter(TestCase):
+class CastIntegerFilter(unittest.TestCase):
     """
     Test for the `cast_integer_filter` function.
     """
@@ -75,7 +81,7 @@ class CastIntegerFilter(TestCase):
         self.assertEqual(expected_output, output)
 
 
-class FilterArgsToDictTestCase(TestCase):
+class FilterArgsToDictTestCase(unittest.TestCase):
     """
     Test for the `filter_args_to_dict` function.
     """
@@ -108,7 +114,7 @@ class FilterArgsToDictTestCase(TestCase):
             'date_updated': '08-08-2011',
             'liked': 1
         }
-        acceptable_filter_keys = filters.keys()
+        acceptable_filter_keys = ['favorite', 'archive']
 
         # add bad filters to filters dict
         filters.update(bad_filters)
@@ -143,3 +149,7 @@ class FilterArgsToDictTestCase(TestCase):
         self.assertEqual(set(filter_dict.keys()), set(acceptable_filter_keys))
         self.assertEqual(filter_dict['archived_since'], '2010-08-08T00:00:00')
         self.assertEqual(filter_dict['favorited_since'], now.isoformat())
+
+
+if __name__ == '__main__':
+    unittest.main()
