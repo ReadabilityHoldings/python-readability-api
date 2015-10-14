@@ -66,8 +66,8 @@ class ReaderClient(object):
             doesn't have access to (staging, local dev, etc).
 
         """
-        consumer_key = xargs.get('consumer_key', required_from_env('READABILITY_CONSUMER_KEY'))
-        consumer_secret = xargs.get('consumer_secret', required_from_env('READABILITY_CONSUMER_SECRET'))
+        consumer_key = xargs.get('consumer_key') or required_from_env('READABILITY_CONSUMER_KEY')
+        consumer_secret = xargs.get('consumer_secret') or required_from_env('READABILITY_CONSUMER_SECRET')
 
         self.base_url_template = base_url_template
         self.oauth_session = OAuth1Session(consumer_key, consumer_secret, token_key, token_secret)
@@ -326,7 +326,7 @@ class ParserClient(object):
         logger.debug('Initializing ParserClient with base url template %s',
             base_url_template)
 
-        self.token = xargs.get('token', required_from_env('READABILITY_PARSER_TOKEN'))
+        self.token = xargs.get('token', None) or required_from_env('READABILITY_PARSER_TOKEN')
         self.base_url_template = base_url_template
 
     def get(self, url):
