@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import sys
+
 from setuptools import setup
 
 required = [
@@ -7,12 +9,18 @@ required = [
     'requests',
     'requests_oauthlib',
     'httplib2==0.9.1',
-    'python-dateutil'
+    'python-dateutil',
 ]
+
+# Python 2 dependencies
+if sys.version_info[0] == 2:
+    required += [
+        'mock',
+    ]
 
 setup(
     name='readability-api',
-    version='1.0.0',
+    version='1.0.1',
     description='Python client for the Readability Reader and Parser APIs.',
     long_description=open('README.rst').read(),
     author='The Readability Team',
@@ -28,7 +36,7 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: Implementation :: PyPy',
     ),
 )

@@ -1,11 +1,51 @@
 # -*- coding: utf-8 -*-
+import os
 try:
     import unittest2 as unittest
 except ImportError:
     import unittest
+try:
+    from unittest.mock import patch
+except ImportError as e:
+    from mock import patch
 
-from readability import xauth, ReaderClient
+from readability import xauth, ReaderClient, ParserClient
 
+
+class ClientInitTest(unittest.TestCase):
+    """
+    Test that passing tokens to the constructor bypasses looking in ENV.
+
+    """
+    def setUp(self):
+        self.env_cache = {}
+        for var in ['READABILITY_PARSER_TOKEN', 'READABILITY_CONSUMER_KEY', 'READABILITY_CONSUMER_SECRET']:
+            if var in os.environ:
+                self.env_cache[var] = os.environ[var]
+                del os.environ[var]
+
+    def tearDown(self):
+        for key, val in self.env_cache.items():
+            os.environ[key] = val
+
+    def test_reader(self):
+        """
+        Test that passing tokens to the constructor bypasses looking in ENV.
+
+        """
+        with patch('readability.core.required_from_env') as mock:
+            ReaderClient(
+                consumer_key='consumer_key',
+                consumer_secret='consumer_secret',
+                # Fake xauth since we wont be actually making calls for this test
+                token_key='token_key',
+                token_secret='token_secret')
+            self.assertEqual(mock.call_count, 0)
+
+    def test_parser(self):
+        with patch('readability.core.required_from_env') as mock:
+            ParserClient(token='token')
+            self.assertEqual(mock.call_count, 0)
 
 class ReaderClientNoBookmarkTest(unittest.TestCase):
     """
