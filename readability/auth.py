@@ -45,10 +45,10 @@ def xauth(base_url_template=DEFAULT_READER_URL_TEMPLATE, **xargs):
     :param password: A password, otherwise read from READABILITY_PASSWORD.
 
     """
-    consumer_key = xargs.get('consumer_key', required_from_env('READABILITY_CONSUMER_KEY'))
-    consumer_secret = xargs.get('consumer_secret', required_from_env('READABILITY_CONSUMER_SECRET'))
-    username = xargs.get('username', required_from_env('READABILITY_USERNAME'))
-    password = xargs.get('password', required_from_env('READABILITY_PASSWORD'))
+    consumer_key = xargs.get('consumer_key') or required_from_env('READABILITY_CONSUMER_KEY')
+    consumer_secret = xargs.get('consumer_secret') or required_from_env('READABILITY_CONSUMER_SECRET')
+    username = xargs.get('username') or required_from_env('READABILITY_USERNAME')
+    password = xargs.get('password') or required_from_env('READABILITY_PASSWORD')
 
     client = Client(consumer_key, client_secret=consumer_secret, signature_type='BODY')
     url = base_url_template.format(ACCESS_TOKEN_URL)
