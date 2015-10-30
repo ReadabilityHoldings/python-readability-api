@@ -20,7 +20,7 @@ if sys.version_info[0] == 2:
 
 setup(
     name='readability-api',
-    version='1.0.1',
+    version='1.0.2',
     description='Python client for the Readability Reader and Parser APIs.',
     long_description=open('README.rst').read(),
     author='The Readability Team',
