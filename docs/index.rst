@@ -79,7 +79,7 @@ available functionality.
 
    from readability import ParserClient
 
-   parser_client = ParserClient('your_parser_token')
+   parser_client = ParserClient(token='your_parser_token')
    parser_response = parser_client.get_article('http://paulgraham.com/altair.html')
    article = parser_response.json()
 
