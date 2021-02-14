@@ -8,7 +8,7 @@ required = [
     'pytest',
     'requests',
     'requests_oauthlib',
-    'httplib2==0.9.1',
+    'httplib2==0.19.0',
     'python-dateutil',
 ]
 
