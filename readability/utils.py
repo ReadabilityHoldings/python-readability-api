@@ -96,7 +96,7 @@ def filter_args_to_dict(filter_dict, accepted_filter_keys=[]):
             # Going to skip it.
             continue
 
-        # map of casting funcitons to filter types
+        # map of casting functions to filter types
         filter_cast_map = {
             'int': cast_integer_filter,
             'datetime': cast_datetime_filter

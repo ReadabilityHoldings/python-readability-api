@@ -5,7 +5,7 @@ Authentication
 
     <a href="https://dev.twitter.com/oauth/3-legged" target="_blank">three-legged oAuth flow</a>
 
-Authentication can be accomplised through either a |three-legged-twitter| or
+Authentication can be accomplished through either a |three-legged-twitter| or
 via xAuth where a username and password are exchanged directly for a user token
 and secret.
 

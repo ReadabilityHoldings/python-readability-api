@@ -25,9 +25,9 @@ Tests
 -----
 
 Valid Parser, Reader, username, and password must be set as environment
-variables before running the tests. This test suit runs agains the live
+variables before running the tests. This test suit runs against the live
 Readability API and also serves as integration tests. We recommend creating a
-seperate testing user account on Readability to avoid disturbing your reading
+separate testing user account on Readability to avoid disturbing your reading
 list. **Note:** These tests do reset the bookmarks library of the provided user
 when complete. They should *not* be run on your primary user account!
 

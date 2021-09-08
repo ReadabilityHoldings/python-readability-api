@@ -4,7 +4,7 @@
 readability.clients
 ~~~~~~~~~~~~~~~~~~~
 
-This module provies a client for the Reader API.
+This module provides a client for the Reader API.
 
 """
 
